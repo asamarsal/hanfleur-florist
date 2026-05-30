@@ -26,14 +26,14 @@ export const socialLinks: SocialLink[] = [
     ariaLabel: 'Lihat katalog bouquet Hanfleur Florist',
   },
   {
-    label: 'Instagram Hanfleur Florist',
+    label: 'Instagram',
     href: links.instagram,
     icon: Instagram,
     ariaLabel: 'Buka Instagram Hanfleur Florist',
     external: true,
   },
   {
-    label: 'TikTok Hanfleur Florist',
+    label: 'TikTok',
     href: links.tiktok,
     icon: Music2,
     ariaLabel: 'Buka TikTok Hanfleur Florist',
