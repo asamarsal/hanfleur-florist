@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { ChevronDown } from 'lucide-react'
 import { BouquetHero } from '@/components/bouquet-hero'
 import { PrimaryCta } from '@/components/primary-cta'
 import { SocialLinkButton } from '@/components/social-link-button'
@@ -102,6 +103,19 @@ export function HanfleurProfileCard() {
               Artificial Flower Bouquet
             </div>
 
+            {/* Pesan Sekarang Button with Glassmorphism & Shine Effect */}
+            <button
+              onClick={() => {
+                document
+                  .getElementById('order-section')
+                  ?.scrollIntoView({ behavior: 'smooth' })
+              }}
+              className="js-badge glass-shine-btn group flex cursor-pointer items-center gap-1.5 rounded-full border border-white/50 bg-gradient-to-b from-hf-accent/85 to-hf-rose/90 backdrop-blur-md px-6 py-2 text-sm font-bold text-white shadow-[0_8px_20px_rgba(185,78,104,0.25)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_12px_24px_rgba(185,78,104,0.35)] active:scale-[0.98] outline-none"
+            >
+              Pesan Sekarang
+              <ChevronDown className="h-4 w-4 transition-transform duration-300 group-hover:translate-y-0.5" />
+            </button>
+
             <div className="js-hero-copy flex flex-col gap-3">
               <h1 className="text-balance font-serif text-3xl font-bold leading-tight tracking-tight text-hf-rose sm:text-4xl lg:text-[2.75rem]">
                 Buket Cantik untuk Momen Spesialmu
@@ -115,7 +129,7 @@ export function HanfleurProfileCard() {
             </div>
           </div>
 
-          <div className="flex flex-col gap-3">
+          <div id="order-section" className="flex flex-col gap-3">
             <PrimaryCta />
             {socialLinks.map((link) => (
               <SocialLinkButton key={link.label} link={link} />

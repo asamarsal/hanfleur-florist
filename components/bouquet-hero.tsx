@@ -8,9 +8,9 @@ export function BouquetHero() {
         <Image
           src="/images/hanfleur-logo-transparent.png"
           alt="Logo Hanfleur Florist"
-          width={420}
-          height={420}
-          className="h-auto w-full max-w-[220px] sm:max-w-[260px]"
+          width={320}
+          height={320}
+          className="h-auto w-full max-w-[180px] sm:max-w-[220px]"
           priority
         />
       </div>
@@ -29,9 +29,9 @@ export function BouquetHero() {
           <Image
             src="/images/hanfleur-bouquet-transparent.png"
             alt="Artificial flower bouquet berwarna pink dari Hanfleur Florist"
-            width={720}
-            height={720}
-            className="h-auto w-full object-contain"
+            width={420}
+            height={420}
+            className="object-contain"
             priority
           />
         </div>
