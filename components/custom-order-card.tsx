@@ -1,0 +1,33 @@
+import { ArrowUpRight, Sparkles } from 'lucide-react'
+import { links } from '@/data/links'
+
+export function CustomOrderCard() {
+  return (
+    <div className="js-reveal-card rounded-3xl border border-hf-accent/30 bg-gradient-to-br from-hf-cream/95 to-hf-secondary/60 p-5 shadow-sm">
+      <div className="inline-flex items-center gap-1.5 rounded-full bg-white/60 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-hf-rose">
+        <Sparkles className="h-3.5 w-3.5 text-hf-gold" />
+        Custom Bouquet
+      </div>
+
+      <h2 className="mt-3 font-serif text-xl font-bold text-hf-rose">
+        Punya Request Khusus?
+      </h2>
+
+      <p className="mt-2 text-sm leading-6 text-hf-text">
+        Pilih warna, tema, dan gaya bouquet yang kamu inginkan. Kami siap
+        membantu membuat hadiah yang lebih personal.
+      </p>
+
+      <a
+        href={links.whatsapp}
+        target="_blank"
+        rel="noreferrer"
+        aria-label="Buat custom bouquet via WhatsApp"
+        className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-xl bg-hf-rose px-4 py-3 text-sm font-bold text-hf-cream transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-hf-rose-dark active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hf-rose"
+      >
+        Custom Bouquet Sekarang
+        <ArrowUpRight className="h-4 w-4" />
+      </a>
+    </div>
+  )
+}
