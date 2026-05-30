@@ -1,20 +1,28 @@
-import { Flower2, Heart, Gift } from 'lucide-react'
+import Image from 'next/image'
 
 const benefits = [
-  { label: 'Artificial Flower', icon: Flower2 },
-  { label: 'Tahan Lama', icon: Heart },
-  { label: 'Bisa Custom', icon: Gift },
+  { label: 'Artificial Flower', iconPath: '/icon/icon-flower.png' },
+  { label: 'Tahan Lama', iconPath: '/icon/icon-heart.png' },
+  { label: 'Bisa Custom', iconPath: '/icon/icon-gift.png' },
 ]
 
 export function HighlightCard() {
   return (
     <div className="js-reveal-card grid grid-cols-3 gap-2 rounded-3xl border border-white/50 bg-hf-cream/75 p-3 shadow-sm backdrop-blur-md">
-      {benefits.map(({ label, icon: Icon }) => (
+      {benefits.map(({ label, iconPath }) => (
         <div
           key={label}
           className="flex flex-col items-center gap-2 rounded-2xl bg-white/50 px-2 py-3 text-center"
         >
-          <Icon className="h-5 w-5 text-hf-rose" />
+          <div className="relative h-6 w-6 flex items-center justify-center">
+            <Image
+              src={iconPath}
+              alt=""
+              width={24}
+              height={24}
+              className="h-6 w-6 object-contain"
+            />
+          </div>
           <span className="text-xs font-bold leading-tight text-hf-text">
             {label}
           </span>

@@ -1,6 +1,3 @@
-import type { LucideIcon } from 'lucide-react'
-import { BookOpen, Instagram, Music2, Mail, MapPin } from 'lucide-react'
-
 export const links = {
   whatsapp: 'https://wa.me/62XXXXXXXXXXX',
   catalog: '#',
@@ -13,7 +10,7 @@ export const links = {
 export type SocialLink = {
   label: string
   href: string
-  icon: LucideIcon
+  icon: string
   ariaLabel: string
   external?: boolean
 }
@@ -22,33 +19,33 @@ export const socialLinks: SocialLink[] = [
   {
     label: 'Lihat Katalog Bouquet',
     href: links.catalog,
-    icon: BookOpen,
+    icon: '/icon/icon-catalogue.png',
     ariaLabel: 'Lihat katalog bouquet Hanfleur Florist',
   },
   {
     label: 'Instagram',
     href: links.instagram,
-    icon: Instagram,
+    icon: '/icon/icon-instagram.png',
     ariaLabel: 'Buka Instagram Hanfleur Florist',
     external: true,
   },
   {
     label: 'TikTok',
     href: links.tiktok,
-    icon: Music2,
+    icon: '/icon/icon-tiktok.png',
     ariaLabel: 'Buka TikTok Hanfleur Florist',
     external: true,
   },
   {
     label: 'Email Kami',
     href: links.email,
-    icon: Mail,
+    icon: '/icon/icon-email.png',
     ariaLabel: 'Kirim email ke Hanfleur Florist',
   },
   {
     label: 'Lokasi & Informasi Pemesanan',
     href: links.location,
-    icon: MapPin,
+    icon: '/icon/icon-maps.png',
     ariaLabel: 'Lihat lokasi dan informasi pemesanan',
   },
 ]
