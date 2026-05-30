@@ -4,8 +4,8 @@ import { BookOpen, Instagram, Music2, Mail, MapPin } from 'lucide-react'
 export const links = {
   whatsapp: 'https://wa.me/62XXXXXXXXXXX',
   catalog: '#',
-  instagram: 'https://instagram.com/hanfleurflorist',
-  tiktok: 'https://tiktok.com/@hanfleurflorist',
+  instagram: 'https://instagram.com/hanfleurflorist.bekasi',
+  tiktok: 'https://tiktok.com/@hanfleurflorist.bekasi',
   email: 'mailto:hanfleurflorist@gmail.com',
   location: '#',
 }
