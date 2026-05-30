@@ -6,7 +6,7 @@ export function BouquetHero() {
     <div className="flex flex-col items-center gap-4">
       <div className="js-logo overflow-hidden rounded-3xl border border-white/60 bg-hf-cream/40 shadow-sm">
         <Image
-          src="/images/hanfleur-logo.png"
+          src="/images/hanfleur-logo-transparent.png"
           alt="Logo Hanfleur Florist"
           width={420}
           height={420}
@@ -27,7 +27,7 @@ export function BouquetHero() {
 
         <div className="js-bouquet relative z-10 overflow-hidden rounded-[28px] border border-white/60 shadow-[0_18px_50px_rgba(185,78,104,0.18)]">
           <Image
-            src="/images/hanfleur-bouquet.png"
+            src="/images/hanfleur-bouquet-transparent.png"
             alt="Artificial flower bouquet berwarna pink dari Hanfleur Florist"
             width={720}
             height={720}
