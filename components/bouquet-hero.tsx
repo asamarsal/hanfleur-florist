@@ -4,7 +4,7 @@ import { Sparkle } from '@/components/sparkle'
 export function BouquetHero() {
   return (
     <div className="flex flex-col items-center gap-4">
-      <div className="js-logo overflow-hidden rounded-3xl border border-white/60 bg-hf-cream/40 shadow-sm">
+      <div className="js-logo">
         <Image
           src="/images/hanfleur-logo-transparent.png"
           alt="Logo Hanfleur Florist"
@@ -25,7 +25,7 @@ export function BouquetHero() {
         <Sparkle className="absolute right-3 bottom-20 z-20" size={22} />
         <Sparkle className="absolute right-16 -top-1 z-20" size={12} />
 
-        <div className="js-bouquet relative z-10 overflow-hidden rounded-[28px] border border-white/60 shadow-[0_18px_50px_rgba(185,78,104,0.18)]">
+        <div className="js-bouquet">
           <Image
             src="/images/hanfleur-bouquet-transparent.png"
             alt="Artificial flower bouquet berwarna pink dari Hanfleur Florist"
