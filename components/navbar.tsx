@@ -15,40 +15,45 @@ export function Navbar() {
     if (!audio) return
     audio.volume = 0.5
 
-    const playOnInteract = async () => {
-      if (audio.paused) {
-        try {
-          await audio.play()
-          document.removeEventListener('click', playOnInteract)
-          document.removeEventListener('touchstart', playOnInteract)
-          document.removeEventListener('touchend', playOnInteract)
-          document.removeEventListener('scroll', playOnInteract)
-          document.removeEventListener('keydown', playOnInteract)
-        } catch (e) {
-          // ignore
-        }
+    let isAttemptingPlay = false
+
+    const playOnInteract = () => {
+      if (!audio.paused || isAttemptingPlay) return
+      
+      isAttemptingPlay = true
+      const promise = audio.play()
+      
+      if (promise !== undefined) {
+        promise.then(() => {
+          isAttemptingPlay = false
+          window.removeEventListener('click', playOnInteract)
+          window.removeEventListener('touchstart', playOnInteract)
+          window.removeEventListener('scroll', playOnInteract)
+          window.removeEventListener('mousemove', playOnInteract)
+        }).catch((e) => {
+          isAttemptingPlay = false
+        })
+      } else {
+        isAttemptingPlay = false
       }
     }
 
     // Attempt native play
-    const promise = audio.play()
-    if (promise !== undefined) {
-      promise.catch(() => {
-        // If autoplay is blocked by browser policy, fallback to any user interaction
-        document.addEventListener('click', playOnInteract, { passive: true })
-        document.addEventListener('touchstart', playOnInteract, { passive: true })
-        document.addEventListener('touchend', playOnInteract, { passive: true })
-        document.addEventListener('scroll', playOnInteract, { passive: true })
-        document.addEventListener('keydown', playOnInteract, { passive: true })
+    const initialPromise = audio.play()
+    if (initialPromise !== undefined) {
+      initialPromise.catch(() => {
+        window.addEventListener('click', playOnInteract, { passive: true })
+        window.addEventListener('touchstart', playOnInteract, { passive: true })
+        window.addEventListener('scroll', playOnInteract, { passive: true })
+        window.addEventListener('mousemove', playOnInteract, { passive: true })
       })
     }
 
     return () => {
-      document.removeEventListener('click', playOnInteract)
-      document.removeEventListener('touchstart', playOnInteract)
-      document.removeEventListener('touchend', playOnInteract)
-      document.removeEventListener('scroll', playOnInteract)
-      document.removeEventListener('keydown', playOnInteract)
+      window.removeEventListener('click', playOnInteract)
+      window.removeEventListener('touchstart', playOnInteract)
+      window.removeEventListener('scroll', playOnInteract)
+      window.removeEventListener('mousemove', playOnInteract)
     }
   }, [])
 
