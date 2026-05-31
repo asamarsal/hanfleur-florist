@@ -43,7 +43,7 @@ export function CustomBouquetDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent
-        className="flex max-h-[95vh] sm:max-h-[85vh] w-full flex-col overflow-hidden p-0 bg-[#fcf8f9] gap-0 border-none shadow-xl [&>button]:hidden !bottom-0 !top-auto !translate-y-0 !rounded-b-none !rounded-t-[32px] !max-w-full sm:!max-w-[480px] sm:!bottom-auto sm:!top-[50%] sm:!-translate-y-1/2 sm:!rounded-[32px]"
+        className="flex max-h-[85vh] sm:max-h-[85vh] w-full flex-col overflow-hidden p-0 bg-[#fcf8f9] gap-0 border-none shadow-xl [&>button]:hidden !bottom-0 !top-auto !translate-y-0 !rounded-b-none !rounded-t-[32px] !max-w-full sm:!max-w-[480px] sm:!bottom-auto sm:!top-[50%] sm:!-translate-y-1/2 sm:!rounded-[32px]"
         aria-describedby={undefined}
       >
         <DialogTitle className="sr-only">Custom Bouquet Form</DialogTitle>
@@ -57,14 +57,13 @@ export function CustomBouquetDialog({
           </button>
           <div className="flex flex-col items-center justify-center">
             <h2 className="text-xl font-bold text-[#c7345e] font-serif flex items-center gap-2">
-              Custom Bouquet <span className="text-xl">🌸</span>
+              Custom Bouquet<span className="text-xl">🌸</span>
             </h2>
             <p className="text-xs font-medium text-[#e04470]">
-              Buat bouquet sesuai keinginanmu 💖
+              Buat bouquet sesuai keinginanmu
             </p>
           </div>
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100">
-            <span className="text-xl">🎁</span>
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-transparent">
           </div>
         </div>
 
