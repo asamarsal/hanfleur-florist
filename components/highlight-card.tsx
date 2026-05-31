@@ -12,19 +12,23 @@ export function HighlightCard() {
       {benefits.map(({ label, iconPath }) => (
         <div
           key={label}
-          className="flex flex-col items-center gap-2 rounded-2xl bg-white/50 px-2 py-3 text-center"
+          className="flex flex-col items-center gap-2 rounded-2xl bg-white/50 px-2 py-2 text-center"
         >
-          <div className="relative h-6 w-6 flex items-center justify-center">
+          <div className="relative h-10 w-10 flex items-center justify-center">
             <Image
               src={iconPath}
               alt=""
               width={24}
               height={24}
-              className="h-6 w-6 object-contain"
+              className="h-10 w-10"
             />
           </div>
           <span className="text-xs font-bold leading-tight text-hf-text">
-            {label}
+            {label.split(' ').map((word, idx) => (
+              <span key={idx} className="block">
+                {word}
+              </span>
+            ))}
           </span>
         </div>
       ))}

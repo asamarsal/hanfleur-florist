@@ -2,21 +2,27 @@ import Image from 'next/image'
 import { ArrowUpRight } from 'lucide-react'
 import type { SocialLink } from '@/data/links'
 
-export function SocialLinkButton({ link }: { link: SocialLink }) {
+export function SocialLinkButton({
+  link,
+  className = '',
+}: {
+  link: SocialLink
+  className?: string
+}) {
   return (
     <a
       href={link.href}
       aria-label={link.ariaLabel}
       {...(link.external ? { target: '_blank', rel: 'noreferrer' } : {})}
-      className="group js-link-button flex min-h-12 w-full items-center justify-between gap-3 rounded-2xl border border-hf-border bg-hf-cream/90 px-4 py-4 text-left font-semibold text-hf-rose shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-md active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hf-rose"
+      className={`group js-link-button flex min-h-12 w-full items-center justify-between gap-3 rounded-2xl border border-hf-border bg-hf-cream/90 px-4 py-2 text-left font-semibold text-hf-rose shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-md active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hf-rose ${className}`}
     >
       <span className="flex items-center gap-3">
         <Image
           src={link.icon}
           alt=""
-          width={24}
-          height={24}
-          className="h-6 w-6 shrink-0 object-contain"
+          width={44}
+          height={44}
+          className="h-10 w-10 shrink-0 object-contain"
         />
         {link.label}
       </span>

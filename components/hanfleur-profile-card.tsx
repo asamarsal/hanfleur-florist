@@ -90,7 +90,7 @@ export function HanfleurProfileCard() {
       aria-label="Hanfleur Florist link in bio"
       className="relative overflow-hidden rounded-[32px] border border-white/50 bg-white/35 p-4 shadow-[0_20px_60px_rgba(185,78,104,0.12)] backdrop-blur-xl sm:p-6 lg:p-8"
     >
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_0.95fr] lg:items-center lg:gap-10">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_0.95fr] lg:items-start lg:gap-10">
         {/* Left column: logo + bouquet */}
         <div>
           <BouquetHero />
@@ -110,7 +110,7 @@ export function HanfleurProfileCard() {
                   .getElementById('order-section')
                   ?.scrollIntoView({ behavior: 'smooth' })
               }}
-              className="js-badge glass-shine-btn group relative flex cursor-pointer items-center gap-1.5 rounded-full border border-white/50 bg-gradient-to-r from-hf-rose/85 to-hf-rose/90 backdrop-blur-md px-6 py-2 text-sm font-bold text-white shadow-[0_8px_20px_rgba(185,78,104,0.25)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_12px_24px_rgba(185,78,104,0.35)] active:scale-[0.98] outline-none"
+              className="js-badge glass-shine-btn group relative flex lg:hidden cursor-pointer items-center gap-1.5 rounded-full border border-white/50 bg-gradient-to-r from-hf-rose/85 to-hf-rose/90 backdrop-blur-md px-6 py-2 text-sm font-bold text-white shadow-[0_8px_20px_rgba(185,78,104,0.25)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_12px_24px_rgba(185,78,104,0.35)] active:scale-[0.98] outline-none"
             >
               <span className="shine-overlay" />
               <span className="relative z-10 flex items-center gap-1.5">
@@ -119,7 +119,7 @@ export function HanfleurProfileCard() {
               </span>
             </button>
 
-            <div className="js-hero-copy flex flex-col gap-3 mb-8 mt-8">
+            <div className="js-hero-copy flex flex-col gap-3 mb-8 mt-8 lg:mt-4">
               <h1 className="text-balance font-serif text-3xl font-bold leading-tight tracking-tight text-hf-rose sm:text-4xl lg:text-[2.75rem]">
                 Buket Cantik untuk Momen Spesialmu
               </h1>
@@ -132,18 +132,28 @@ export function HanfleurProfileCard() {
             </div>
           </div>
 
-          <div id="order-section" className="flex flex-col gap-3">
+          <div id="order-section" className="flex flex-col gap-3 scroll-mt-6">
             <PrimaryCta />
-            {socialLinks.map((link) => (
-              <SocialLinkButton key={link.label} link={link} />
-            ))}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+              {socialLinks.map((link) => (
+                <SocialLinkButton
+                  key={link.label}
+                  link={link}
+                  className={link.label === 'Lokasi & Informasi Pemesanan' ? 'lg:col-span-2' : ''}
+                />
+              ))}
+            </div>
           </div>
 
           <div className="js-info-sections flex flex-col gap-4">
             <HighlightCard />
-            <CustomOrderCard />
           </div>
         </div>
+      </div>
+
+      {/* Custom Order Card (full width below columns on desktop) */}
+      <div className="mt-6 lg:mt-8">
+        <CustomOrderCard />
       </div>
     </section>
   )
