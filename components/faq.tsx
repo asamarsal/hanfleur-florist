@@ -130,9 +130,13 @@ export function Faq() {
                 className="flex items-center w-full py-4 px-4 sm:py-4 sm:px-5 lg:px-6 text-left gap-4 sm:gap-5"
               >
                 {/* Number Badge */}
-                <div className="flex shrink-0 items-center justify-center w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-hf-rose/10 text-hf-rose font-bold text-sm sm:text-base">
-                  {index + 1}
-                </div>
+                <Image
+                  src={`/faq/number/icon-no-${index + 1}.png`}
+                  alt={`Nomor ${index + 1}`}
+                  width={44}
+                  height={44}
+                  className="w-9 h-9 sm:w-11 sm:h-11 object-contain shrink-0"
+                />
 
                 {/* Question */}
                 <h3 className="flex-1 font-serif text-[15px] sm:text-[17px] font-bold text-hf-rose leading-snug">
