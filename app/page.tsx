@@ -9,11 +9,11 @@ import { Faq } from '@/components/faq'
 
 export default function Page() {
   return (
-    <main className="relative min-h-screen bg-gradient-to-br from-hf-bg via-[#fadde4] to-hf-secondary">
+    <main className="relative min-h-screen bg-gradient-to-br from-hf-bg via-[#fadde4] to-hf-secondary pt-[58px] lg:pt-[76px]">
       <DecorativeBackground />
       <Navbar />
       <RunningText />
-      <div className="mx-auto w-full max-w-[480px] px-4 pt-2 pb-6 sm:px-5 md:max-w-[680px] lg:max-w-none lg:px-12 lg:pt-3 lg:pb-10">
+      <div className="mx-auto w-full max-w-[480px] px-4 pt-2 pb-6 sm:px-5 md:max-w-[680px] lg:max-w-none lg:px-12 lg:pt-3 lg:pb-10 overflow-x-hidden lg:overflow-x-visible">
         <HanfleurProfileCard />
 
         {/* Desktop-only layout section */}

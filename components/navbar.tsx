@@ -9,7 +9,7 @@ export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <header className="w-full border-b border-hf-border/10 bg-white/25 backdrop-blur-md sticky top-0 z-50">
+    <header className="w-full border-b border-hf-border/10 bg-white/25 backdrop-blur-md fixed top-0 left-0 z-50">
       {/* Desktop Navbar */}
       <div className="hidden lg:flex w-full items-center justify-between py-4 px-12">
         {/* Logo */}
