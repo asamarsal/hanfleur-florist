@@ -4,6 +4,7 @@ import { links } from '@/data/links'
 export function Navbar() {
   return (
     <header className="hidden lg:block w-full border-b border-hf-border/10 bg-white/25 backdrop-blur-md sticky top-0 z-50">
+      {/* Main Navbar */}
       <div className="flex w-full items-center justify-between py-4 px-6 lg:px-12">
         {/* Logo */}
         <a href="#" className="flex flex-col text-left">

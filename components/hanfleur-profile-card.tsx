@@ -88,7 +88,7 @@ export function HanfleurProfileCard() {
     <section
       ref={sectionRef}
       aria-label="Hanfleur Florist link in bio"
-      className="relative overflow-hidden rounded-[32px] border border-white/50 bg-white/35 p-4 shadow-[0_20px_60px_rgba(185,78,104,0.12)] backdrop-blur-xl sm:p-6 lg:p-8"
+      className="relative overflow-hidden rounded-[32px] border border-white/50 bg-white/35 pt-4 pb-4 px-4 shadow-[0_20px_60px_rgba(185,78,104,0.12)] backdrop-blur-xl sm:pt-6 sm:pb-6 sm:px-6 lg:pt-6 lg:pb-8 lg:px-8"
     >
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_0.95fr] lg:items-start lg:gap-10">
         {/* Left column: logo + bouquet */}
@@ -119,7 +119,7 @@ export function HanfleurProfileCard() {
               </span>
             </button>
 
-            <div className="js-hero-copy flex flex-col gap-3 mb-8 mt-8 lg:mt-4">
+            <div className="js-hero-copy flex flex-col gap-3 mb-6 mt-4 lg:mt-2">
               <h1 className="text-balance font-serif text-3xl font-bold leading-tight tracking-tight text-hf-rose sm:text-4xl lg:text-[2.75rem]">
                 Buket Cantik untuk Momen Spesialmu
               </h1>

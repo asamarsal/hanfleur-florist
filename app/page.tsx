@@ -2,6 +2,7 @@ import { DecorativeBackground } from '@/components/decorative-background'
 import { HanfleurProfileCard } from '@/components/hanfleur-profile-card'
 import { Footer } from '@/components/footer'
 import { Navbar } from '@/components/navbar'
+import { RunningText } from '@/components/running-text'
 import { BestSellers } from '@/components/best-sellers'
 import { Testimonials } from '@/components/testimonials'
 
@@ -10,7 +11,8 @@ export default function Page() {
     <main className="relative min-h-screen bg-gradient-to-br from-hf-bg via-[#fadde4] to-hf-secondary">
       <DecorativeBackground />
       <Navbar />
-      <div className="mx-auto w-full max-w-[480px] px-4 py-6 sm:px-5 md:max-w-[680px] lg:max-w-none lg:px-12 lg:py-10">
+      <RunningText />
+      <div className="mx-auto w-full max-w-[480px] px-4 pt-2 pb-6 sm:px-5 md:max-w-[680px] lg:max-w-none lg:px-12 lg:pt-3 lg:pb-10">
         <HanfleurProfileCard />
 
         {/* Desktop-only layout section */}

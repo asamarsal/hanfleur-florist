@@ -1,18 +1,31 @@
 'use client'
 
-import { useRef } from 'react'
+import { useState, useRef } from 'react'
 import Image from 'next/image'
 import { ShoppingBag, ChevronLeft, ChevronRight } from 'lucide-react'
-import { links } from '@/data/links'
+import { ProductModal, type Product } from './product-modal'
 
-const products = [
+const products: Product[] = [
   {
     name: 'Pink Romance',
     price: 'Rp 150.000',
     tag: 'Best Seller',
     tagBg: 'bg-[#fbf1dc] text-[#c9965b] border-[#f5e3be]',
-    desc: 'Rangkaian pink yang manis dan elegan, cocok untuk berbagai momen spesial.',
+    desc: 'Rangkaian pink yang manis dan elegan, cocok untuk berbagai momen spesial. Memberikan kesan romantis dan berkesan untuk orang tersayang.',
     image: '/gallery/flower-1.png',
+    images: ['/gallery/flower-1.png', '/gallery/flower-2.png', '/gallery/flower-3.png', '/gallery/flower-4.png', '/gallery/flower-5.png'],
+    details: [
+      'Artificial flower premium',
+      'Gold heart balloon',
+      'Pink box arrangement',
+      'Gift-ready packaging',
+      'Bisa request kartu ucapan',
+    ],
+    suitableFor: [
+      { label: 'Anniversary', icon: 'heart' },
+      { label: 'Ulang Tahun', icon: 'cake' },
+      { label: 'Hadiah Pasangan', icon: 'gift' },
+    ],
   },
   {
     name: 'Blush Serenity',
@@ -21,6 +34,19 @@ const products = [
     tagBg: 'bg-[#fce4e8] text-hf-rose border-hf-border/50',
     desc: 'Perpaduan blush pink dan white yang lembut dan menenangkan hati.',
     image: '/gallery/flower-2.png',
+    images: ['/gallery/flower-2.png', '/gallery/flower-3.png', '/gallery/flower-4.png', '/gallery/flower-5.png', '/gallery/flower-1.png'],
+    details: [
+      'Artificial flower premium',
+      'Classic blush arrangement',
+      'Premium wrapping paper',
+      'Satin ribbon details',
+      'Free greeting card',
+    ],
+    suitableFor: [
+      { label: 'Wisuda', icon: 'gift' },
+      { label: 'Ulang Tahun', icon: 'cake' },
+      { label: 'Hari Ibu', icon: 'heart' },
+    ],
   },
   {
     name: 'Sweet Love',
@@ -29,6 +55,18 @@ const products = [
     tagBg: 'bg-[#fef2e6] text-[#e28b27] border-[#fde2c8]',
     desc: 'Kombinasi bunga pink dan peach yang hangat, penuh cinta dan kebahagiaan.',
     image: '/gallery/flower-3.png',
+    images: ['/gallery/flower-3.png', '/gallery/flower-4.png', '/gallery/flower-5.png', '/gallery/flower-1.png', '/gallery/flower-2.png'],
+    details: [
+      'Peach & Pink Rose mix',
+      'Minimalist packaging',
+      'Long-lasting quality',
+      'Bisa request kartu ucapan',
+    ],
+    suitableFor: [
+      { label: 'Anniversary', icon: 'heart' },
+      { label: 'Valentine', icon: 'heart' },
+      { label: 'Kejutan', icon: 'gift' },
+    ],
   },
   {
     name: 'Rose Elegance',
@@ -37,6 +75,19 @@ const products = [
     tagBg: 'bg-[#eef2ff] text-[#4f46e5] border-[#c7d2fe]',
     desc: 'Buket mawar eksklusif yang memancarkan keanggunan untuk orang tersayang.',
     image: '/gallery/flower-4.png',
+    images: ['/gallery/flower-4.png', '/gallery/flower-5.png', '/gallery/flower-1.png', '/gallery/flower-2.png', '/gallery/flower-3.png'],
+    details: [
+      'Red Rose premium grade',
+      'Elegant black wrapping',
+      'Gold ribbon tie',
+      'Extra volume arrangement',
+      'Premium greeting card',
+    ],
+    suitableFor: [
+      { label: 'Anniversary', icon: 'heart' },
+      { label: 'Lamaran', icon: 'heart' },
+      { label: 'Hadiah Spesial', icon: 'gift' },
+    ],
   },
   {
     name: 'Sunshine Bloom',
@@ -45,11 +96,25 @@ const products = [
     tagBg: 'bg-[#ecfdf5] text-[#059669] border-[#a7f3d0]',
     desc: 'Rangkaian bunga bernuansa cerah yang membawa keceriaan sepanjang hari.',
     image: '/gallery/flower-5.png',
+    images: ['/gallery/flower-5.png', '/gallery/flower-1.png', '/gallery/flower-2.png', '/gallery/flower-3.png', '/gallery/flower-4.png'],
+    details: [
+      'Yellow & White flower mix',
+      'Fresh visual appeal',
+      'Rustic paper wrapping',
+      'Compact size',
+      'Free greeting card',
+    ],
+    suitableFor: [
+      { label: 'Graduation', icon: 'cake' },
+      { label: 'Get Well Soon', icon: 'heart' },
+      { label: 'Pertemanan', icon: 'gift' },
+    ],
   },
 ]
 
 export function BestSellers() {
   const scrollRef = useRef<HTMLDivElement>(null)
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
 
   const scrollLeft = () => {
     if (scrollRef.current) {
@@ -134,20 +199,26 @@ export function BestSellers() {
                 </div>
 
                 {/* Button */}
-                <a
-                  href={links.whatsapp}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-4 flex items-center justify-center gap-1.5 rounded-xl border border-hf-border/50 bg-white/80 py-2.5 text-xs font-bold text-hf-rose shadow-sm hover:bg-hf-rose hover:text-white transition-all duration-300 active:scale-[0.98]"
+                <button
+                  onClick={() => setSelectedProduct(p)}
+                  className="mt-4 flex w-full items-center justify-center gap-1.5 rounded-xl border border-hf-border/50 bg-white/80 py-2.5 text-xs font-bold text-hf-rose shadow-sm hover:bg-hf-rose hover:text-white transition-all duration-300 active:scale-[0.98]"
                 >
                   <ShoppingBag className="h-3.5 w-3.5" />
                   Lihat Detail
-                </a>
+                </button>
               </div>
             </div>
           ))}
         </div>
       </div>
+
+      {/* Product Detail Modal */}
+      {selectedProduct && (
+        <ProductModal
+          product={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+        />
+      )}
     </div>
   )
 }
