@@ -114,7 +114,7 @@ export function Navbar() {
       >
         <nav className="flex flex-col gap-3.5">
           <a
-            href="#"
+            href="/"
             onClick={() => setIsOpen(false)}
             className="text-sm font-bold text-hf-rose"
           >
