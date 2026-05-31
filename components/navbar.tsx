@@ -11,63 +11,64 @@ export function Navbar() {
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
   useEffect(() => {
-    const audio = new Audio('/song/ost-song.mp3')
-    audio.loop = true
-    audio.volume = 0.5 // Adjust volume so it's not too loud
-    audioRef.current = audio
+    const audio = audioRef.current
+    if (!audio) return
 
-    const attemptPlay = async () => {
-      try {
-        await audio.play()
-        setIsPlaying(true)
-      } catch (err) {
-        console.log("Autoplay blocked by browser policy:", err)
-        
-        // Fallback: tunggu interaksi pertama dari user (klik di mana saja)
-        const playOnInteract = async () => {
-          try {
-            await audio.play()
-            setIsPlaying(true)
-            // Hanya hapus event listener JIKA berhasil diputar
-            document.removeEventListener('click', playOnInteract)
-            document.removeEventListener('touchstart', playOnInteract)
-            document.removeEventListener('touchend', playOnInteract)
-            document.removeEventListener('pointerdown', playOnInteract)
-          } catch (e) {
-            // Jika gagal (misal gesture ditolak), biarkan listener tetap aktif untuk percobaan berikutnya
-            console.log("Interact fallback failed, waiting for stronger interaction...")
-          }
+    audio.volume = 0.5
+
+    const playOnInteract = async () => {
+      if (audio.paused) {
+        try {
+          await audio.play()
+          document.removeEventListener('click', playOnInteract)
+          document.removeEventListener('touchstart', playOnInteract)
+          document.removeEventListener('touchend', playOnInteract)
+          document.removeEventListener('scroll', playOnInteract)
+        } catch (e) {
+          // ignore
         }
-        document.addEventListener('click', playOnInteract)
-        document.addEventListener('touchstart', playOnInteract, { passive: true })
-        document.addEventListener('touchend', playOnInteract, { passive: true })
-        document.addEventListener('pointerdown', playOnInteract, { passive: true })
       }
     }
 
-    attemptPlay()
+    // Attempt to play immediately
+    audio.play().catch(() => {
+      // If blocked, attach listeners
+      document.addEventListener('click', playOnInteract, { passive: true })
+      document.addEventListener('touchstart', playOnInteract, { passive: true })
+      document.addEventListener('touchend', playOnInteract, { passive: true })
+      document.addEventListener('scroll', playOnInteract, { passive: true })
+    })
 
     return () => {
-      audio.pause()
-      audio.src = ''
+      document.removeEventListener('click', playOnInteract)
+      document.removeEventListener('touchstart', playOnInteract)
+      document.removeEventListener('touchend', playOnInteract)
+      document.removeEventListener('scroll', playOnInteract)
     }
   }, [])
 
   const toggleMusic = (e: React.MouseEvent) => {
-    e.stopPropagation() // Prevent triggering the global document click listener
+    e.stopPropagation()
     if (!audioRef.current) return
 
     if (isPlaying) {
       audioRef.current.pause()
-      setIsPlaying(false)
     } else {
       audioRef.current.play()
-      setIsPlaying(true)
     }
   }
 
   return (
     <header className="w-full border-b border-hf-border/10 bg-white/25 backdrop-blur-md fixed top-0 left-0 z-50">
+      <audio
+        ref={audioRef}
+        src="/song/ost-song.mp3"
+        loop
+        playsInline
+        preload="auto"
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
+      />
       {/* Desktop Navbar */}
       <div className="hidden lg:flex w-full items-center justify-between py-4 px-12">
         {/* Logo */}
