@@ -24,13 +24,24 @@ export function Navbar() {
         console.log("Autoplay blocked by browser policy:", err)
         
         // Fallback: tunggu interaksi pertama dari user (klik di mana saja)
-        const playOnInteract = () => {
-          audio.play().then(() => setIsPlaying(true)).catch(e => console.log(e))
-          document.removeEventListener('click', playOnInteract)
-          document.removeEventListener('touchstart', playOnInteract)
+        const playOnInteract = async () => {
+          try {
+            await audio.play()
+            setIsPlaying(true)
+            // Hanya hapus event listener JIKA berhasil diputar
+            document.removeEventListener('click', playOnInteract)
+            document.removeEventListener('touchstart', playOnInteract)
+            document.removeEventListener('touchend', playOnInteract)
+            document.removeEventListener('pointerdown', playOnInteract)
+          } catch (e) {
+            // Jika gagal (misal gesture ditolak), biarkan listener tetap aktif untuk percobaan berikutnya
+            console.log("Interact fallback failed, waiting for stronger interaction...")
+          }
         }
         document.addEventListener('click', playOnInteract)
-        document.addEventListener('touchstart', playOnInteract)
+        document.addEventListener('touchstart', playOnInteract, { passive: true })
+        document.addEventListener('touchend', playOnInteract, { passive: true })
+        document.addEventListener('pointerdown', playOnInteract, { passive: true })
       }
     }
 
