@@ -35,7 +35,7 @@ export default function Page() {
               Lokasi Toko Bouquet 📍
             </h2>
             <p className="mt-2 text-sm text-hf-text/80">
-              Taman Wisma Asri 2, Bekasi, Indonesia. Jemput atau ambil sendiri di lokasi atau order via ojek online!
+              Taman Wisma Asri 2, Bekasi, Indonesia. Ambil sendiri di lokasi atau order via ojek online!
             </p>
           </div>
           <div className="w-full overflow-hidden rounded-2xl border border-hf-border/20 shadow-inner h-[280px] sm:h-[400px]">
