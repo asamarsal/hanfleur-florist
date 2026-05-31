@@ -110,7 +110,7 @@ export function Faq() {
     <section
       id="faq"
       ref={sectionRef}
-      className="relative my-10 sm:my-16 rounded-[32px] bg-gradient-to-bl from-[#f46d95] to-[#f9a2bf] p-6 sm:p-8 lg:p-10 shadow-[0_20px_60px_rgba(185,78,104,0.15)] border border-white/40 overflow-hidden"
+      className="relative my-10 sm:my-16 rounded-[32px] bg-gradient-to-bl from-[#f46d95] to-[#f9a2bf] p-6 sm:p-8 lg:p-10 shadow-[0_20px_60px_rgba(185,78,104,0.15)] border border-white/40"
     >
       <style>{`
         @keyframes float-butterfly {
