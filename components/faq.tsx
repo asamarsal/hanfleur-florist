@@ -1,8 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { Plus, Minus } from 'lucide-react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 
 const faqData = [
   {
@@ -57,13 +61,57 @@ const faqData = [
 
 export function Faq() {
   const [openIndex, setOpenIndex] = useState<number | null>(null)
+  const sectionRef = useRef<HTMLDivElement>(null)
 
   const toggleFaq = (index: number) => {
     setOpenIndex(openIndex === index ? null : index)
   }
 
+  useEffect(() => {
+    const reduceMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches
+
+    if (reduceMotion) return
+
+    const cards = sectionRef.current?.querySelectorAll('.faq-card')
+    if (!cards) return
+
+    const ctx = gsap.context(() => {
+      cards.forEach((card, index) => {
+        const fromLeft = index % 2 === 0
+
+        // Set initial state
+        gsap.set(card, {
+          x: fromLeft ? -60 : 60,
+          opacity: 0,
+        })
+
+        // Animating on scroll
+        gsap.to(card, {
+          scrollTrigger: {
+            trigger: card,
+            start: 'top 88%',
+            toggleActions: 'play none none none',
+            once: true,
+          },
+          x: 0,
+          opacity: 1,
+          duration: 0.75,
+          ease: 'power2.out',
+        })
+      })
+    }, sectionRef)
+
+    return () => ctx.revert()
+  }, [])
+
   return (
-    <section id="faq" className="relative my-10 sm:my-16 rounded-[32px] bg-gradient-to-bl from-[#f46d95] to-[#f9a2bf] p-6 sm:p-8 lg:p-10 shadow-[0_20px_60px_rgba(185,78,104,0.15)] border border-white/40">
+    <section
+      id="faq"
+      ref={sectionRef}
+      className="relative my-10 sm:my-16 rounded-[32px] bg-gradient-to-bl from-[#f46d95] to-[#f9a2bf] p-6 sm:p-8 lg:p-10 shadow-[0_20px_60px_rgba(185,78,104,0.15)] border border-white/40 overflow-hidden"
+    >
       <style>{`
         @keyframes float-butterfly {
           0%, 100% { transform: translateY(0); }
@@ -123,7 +171,7 @@ export function Faq() {
           return (
             <div
               key={index}
-              className={`flex flex-col rounded-2xl border transition-all duration-300 ${isOpen ? 'bg-white/95 border-hf-rose/20 shadow-[0_8px_30px_rgba(185,78,104,0.06)]' : 'bg-white/50 border-white/60 hover:bg-white/80'}`}
+              className={`faq-card flex flex-col rounded-2xl border transition-all duration-300 ${isOpen ? 'bg-white/95 border-hf-rose/20 shadow-[0_8px_30px_rgba(185,78,104,0.06)]' : 'bg-white/50 border-white/60 hover:bg-white/80'}`}
             >
               <button
                 onClick={() => toggleFaq(index)}
