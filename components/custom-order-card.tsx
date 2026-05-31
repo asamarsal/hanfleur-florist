@@ -37,7 +37,7 @@ export function CustomOrderCard() {
               Punya Request Khusus?
             </h2>
 
-            <p className="mt-2 text-sm leading-6 text-hf-text">
+            <p className="text-sm leading-6 text-hf-text">
               Pilih warna, tema, dan gaya bouquet yang kamu inginkan. Kami siap
               membantu membuat hadiah yang lebih personal.
             </p>

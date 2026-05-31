@@ -106,9 +106,15 @@ export function HanfleurProfileCard() {
             {/* Pesan Sekarang Button with Glassmorphism & Shine Effect */}
             <button
               onClick={() => {
-                document
-                  .getElementById('order-section')
-                  ?.scrollIntoView({ behavior: 'smooth' })
+                const element = document.getElementById('order-section')
+                if (element) {
+                  const elementPosition = element.getBoundingClientRect().top + window.scrollY
+                  const navbarOffset = 82 // 58px navbar mobile height + 14px padding offset
+                  window.scrollTo({
+                    top: elementPosition - navbarOffset,
+                    behavior: 'smooth'
+                  })
+                }
               }}
               className="js-badge glass-shine-btn group relative flex lg:hidden cursor-pointer items-center gap-1.5 rounded-full border border-white/50 bg-gradient-to-r from-hf-rose/85 to-hf-rose/90 backdrop-blur-md px-6 py-2 text-sm font-bold text-white shadow-[0_8px_20px_rgba(185,78,104,0.25)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_12px_24px_rgba(185,78,104,0.35)] active:scale-[0.98] outline-none"
             >
