@@ -16,8 +16,8 @@ export default function Page() {
       <div className="mx-auto w-full max-w-[480px] px-4 pt-6 pb-6 sm:px-5 md:max-w-[680px] lg:max-w-none lg:px-12 lg:pt-3 lg:pb-10 overflow-x-hidden lg:overflow-x-visible">
         <HanfleurProfileCard />
 
-        {/* Desktop-only layout section */}
-        <div className="hidden lg:grid lg:grid-cols-[2.1fr_1fr] gap-8 mt-12">
+        {/* Best Sellers & Testimonials Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-[2.1fr_1fr] gap-8 mt-12">
           <BestSellers />
           <Testimonials />
         </div>

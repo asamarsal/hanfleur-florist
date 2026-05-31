@@ -39,8 +39,6 @@ const products: Product[] = [
       'Artificial flower premium',
       'Classic blush arrangement',
       'Premium wrapping paper',
-      'Satin ribbon details',
-      'Free greeting card',
     ],
     suitableFor: [
       { label: 'Wisuda', icon: 'gift' },
@@ -60,7 +58,6 @@ const products: Product[] = [
       'Peach & Pink Rose mix',
       'Minimalist packaging',
       'Long-lasting quality',
-      'Bisa request kartu ucapan',
     ],
     suitableFor: [
       { label: 'Anniversary', icon: 'heart' },
@@ -80,8 +77,6 @@ const products: Product[] = [
       'Red Rose premium grade',
       'Elegant black wrapping',
       'Gold ribbon tie',
-      'Extra volume arrangement',
-      'Premium greeting card',
     ],
     suitableFor: [
       { label: 'Anniversary', icon: 'heart' },
@@ -101,8 +96,6 @@ const products: Product[] = [
       'Yellow & White flower mix',
       'Fresh visual appeal',
       'Rustic paper wrapping',
-      'Compact size',
-      'Free greeting card',
     ],
     suitableFor: [
       { label: 'Graduation', icon: 'cake' },
@@ -166,7 +159,7 @@ export function BestSellers() {
       <div className="w-full overflow-hidden">
         <div
           ref={scrollRef}
-          className="flex overflow-x-hidden scroll-smooth snap-x snap-mandatory -mx-3 pb-2"
+          className="flex overflow-x-auto md:overflow-x-hidden scroll-smooth snap-x snap-mandatory -mx-3 pb-2 no-scrollbar"
         >
           {products.map((p) => (
             <div

@@ -140,7 +140,7 @@ export function ProductModal({
                 </div>
 
                 {/* Thumbnails */}
-                <div className="grid grid-cols-5 gap-2">
+                <div className="hidden lg:grid grid-cols-5 gap-2">
                   {product.images.map((img, i) => (
                     <button
                       key={i}
@@ -158,8 +158,8 @@ export function ProductModal({
             </div>
 
             {/* Right: Details */}
-            <div className="flex-1 p-6 lg:p-8 flex flex-col text-left">
-              <div className="inline-flex">
+            <div className="flex-1 px-6 pb-6 pt-2 lg:p-8 flex flex-col text-left">
+              <div className="hidden lg:inline-flex">
                 <span
                   className={`rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-wider ${product.tagBg}`}
                 >
@@ -167,7 +167,7 @@ export function ProductModal({
                 </span>
               </div>
 
-              <h2 className="mt-4 font-serif text-3xl font-bold text-hf-rose">
+              <h2 className="mt-1 lg:mt-4 font-serif text-3xl font-bold text-hf-rose">
                 {product.name}
               </h2>
               <p className="mt-1 text-xl font-extrabold text-hf-rose/80">
