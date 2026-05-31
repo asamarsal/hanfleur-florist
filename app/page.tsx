@@ -13,7 +13,7 @@ export default function Page() {
       <DecorativeBackground />
       <Navbar />
       <RunningText />
-      <div className="mx-auto w-full max-w-[480px] px-4 pt-2 pb-6 sm:px-5 md:max-w-[680px] lg:max-w-none lg:px-12 lg:pt-3 lg:pb-10 overflow-x-hidden lg:overflow-x-visible">
+      <div className="mx-auto w-full max-w-[480px] px-4 pt-6 pb-6 sm:px-5 md:max-w-[680px] lg:max-w-none lg:px-12 lg:pt-3 lg:pb-10 overflow-x-hidden lg:overflow-x-visible">
         <HanfleurProfileCard />
 
         {/* Desktop-only layout section */}
