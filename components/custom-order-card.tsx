@@ -6,7 +6,7 @@ export function CustomOrderCard() {
   return (
     <div className="js-reveal-card rounded-3xl border border-hf-accent/30 bg-gradient-to-br from-hf-cream/95 to-hf-secondary/60 p-5 shadow-sm">
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
-        
+
         {/* Left Side (Image & Text Content) */}
         <div className="flex items-start gap-4 flex-1">
           {/* Mini Bouquet Image - Desktop only to keep mobile layout completely unchanged */}
@@ -22,12 +22,18 @@ export function CustomOrderCard() {
 
           {/* Text Content */}
           <div className="flex-1 text-left">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-white/60 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-hf-rose">
-              <Sparkles className="h-3.5 w-3.5 text-hf-gold" />
+            <div className="inline-flex items-center gap-2 rounded-full bg-white/60 px-3 py-1 text-[14px] font-bold uppercase tracking-[0.16em] text-hf-rose">
+              <Image
+                src="/icon/icon-sparkle-nobg.png"
+                alt=""
+                width={14}
+                height={14}
+                className="h-5 w-5 object-contain"
+              />
               Custom Bouquet
             </div>
 
-            <h2 className="mt-3 font-serif text-xl font-bold text-hf-rose">
+            <h2 className="mt-2 font-serif text-xl font-bold text-hf-rose">
               Punya Request Khusus?
             </h2>
 
