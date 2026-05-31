@@ -8,44 +8,36 @@ import { links } from '@/data/links'
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [isOpened, setIsOpened] = useState(false) // Untuk overlay "Buka Website"
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
   useEffect(() => {
-    const audio = audioRef.current
-    if (!audio) return
-
-    audio.volume = 0.5
-
-    const playOnInteract = async () => {
-      if (audio.paused) {
-        try {
-          await audio.play()
-          document.removeEventListener('click', playOnInteract)
-          document.removeEventListener('touchstart', playOnInteract)
-          document.removeEventListener('touchend', playOnInteract)
-          document.removeEventListener('scroll', playOnInteract)
-        } catch (e) {
-          // ignore
-        }
-      }
-    }
-
-    // Attempt to play immediately
-    audio.play().catch(() => {
-      // If blocked, attach listeners
-      document.addEventListener('click', playOnInteract, { passive: true })
-      document.addEventListener('touchstart', playOnInteract, { passive: true })
-      document.addEventListener('touchend', playOnInteract, { passive: true })
-      document.addEventListener('scroll', playOnInteract, { passive: true })
-    })
-
-    return () => {
-      document.removeEventListener('click', playOnInteract)
-      document.removeEventListener('touchstart', playOnInteract)
-      document.removeEventListener('touchend', playOnInteract)
-      document.removeEventListener('scroll', playOnInteract)
+    if (audioRef.current) {
+      audioRef.current.volume = 0.5
     }
   }, [])
+
+  useEffect(() => {
+    if (!isOpened) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+    return () => {
+      document.body.style.overflow = 'unset'
+    }
+  }, [isOpened])
+
+  const handleOpenWebsite = async () => {
+    setIsOpened(true)
+    if (audioRef.current) {
+      try {
+        await audioRef.current.play()
+      } catch (err) {
+        console.log("Play failed", err)
+      }
+    }
+  }
 
   const toggleMusic = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -59,16 +51,36 @@ export function Navbar() {
   }
 
   return (
-    <header className="w-full border-b border-hf-border/10 bg-white/25 backdrop-blur-md fixed top-0 left-0 z-50">
-      <audio
-        ref={audioRef}
-        src="/song/ost-song.mp3"
-        loop
-        playsInline
-        preload="auto"
-        onPlay={() => setIsPlaying(true)}
-        onPause={() => setIsPlaying(false)}
-      />
+    <>
+      {/* Overlay "Undangan" untuk force interaction (Wajib untuk Autoplay di HP/IG) */}
+      {!isOpened && (
+        <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#fff5f7] px-4 text-center">
+          <div className="absolute inset-0 bg-[url('/images/decorative-bg.png')] opacity-20 pointer-events-none bg-cover bg-center mix-blend-multiply" />
+          <div className="relative z-10 flex flex-col items-center animate-in fade-in zoom-in duration-700">
+            <span className="text-4xl mb-4 drop-shadow-md">🌸</span>
+            <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#db3563] mb-2 leading-tight">Hanfleur Florist</h1>
+            <p className="text-sm sm:text-base text-[#db3563]/80 mb-8 max-w-xs font-medium">Temukan buket cantik untuk momen spesialmu bersama kami.</p>
+            <button
+              onClick={handleOpenWebsite}
+              className="flex items-center gap-2 rounded-full bg-[#db3563] px-8 py-3.5 text-sm sm:text-base font-bold text-white shadow-xl hover:bg-[#c7345e] transition-all hover:scale-105 active:scale-95 animate-bounce"
+            >
+              <Volume2 className="h-5 w-5" />
+              Buka Website
+            </button>
+          </div>
+        </div>
+      )}
+
+      <header className="w-full border-b border-hf-border/10 bg-white/25 backdrop-blur-md fixed top-0 left-0 z-50">
+        <audio
+          ref={audioRef}
+          src="/song/ost-song.mp3"
+          loop
+          playsInline
+          preload="auto"
+          onPlay={() => setIsPlaying(true)}
+          onPause={() => setIsPlaying(false)}
+        />
       {/* Desktop Navbar */}
       <div className="hidden lg:flex w-full items-center justify-between py-4 px-12">
         {/* Logo */}
@@ -253,5 +265,6 @@ export function Navbar() {
         </nav>
       </div>
     </header>
+    </>
   )
 }
