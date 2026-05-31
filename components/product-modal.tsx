@@ -146,8 +146,8 @@ export function ProductModal({
                       key={i}
                       onClick={() => setMainImage(img)}
                       className={`relative aspect-square overflow-hidden rounded-xl bg-white/50 border-2 transition-all ${mainImage === img
-                          ? 'border-hf-rose'
-                          : 'border-transparent hover:border-hf-rose/30'
+                        ? 'border-hf-rose'
+                        : 'border-transparent hover:border-hf-rose/30'
                         }`}
                     >
                       <Image src={img} alt="" fill className="object-cover" />
@@ -216,7 +216,7 @@ export function ProductModal({
                   href={links.whatsapp}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#ca5a74] to-[#b94e68] px-6 py-3.5 text-sm font-bold text-white shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg active:scale-[0.98]"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#cf4067] to-[#cf4067] px-6 py-3.5 text-sm font-bold text-white shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg active:scale-[0.98]"
                 >
                   <Image
                     src="/icon/icon-whatsapp-nobg.png"
@@ -244,21 +244,21 @@ export function ProductModal({
 
       {/* Zoom Lightbox */}
       {isZoomOpen && (
-        <div 
+        <div
           ref={lightboxRef}
           className="fixed inset-0 z-[200] flex items-center justify-center bg-black/90 animate-in fade-in duration-200"
         >
           {/* Lightbox Controls */}
           <div className="absolute top-6 right-6 z-[210] flex items-center gap-3">
             <div className="flex items-center gap-1 rounded-full bg-white/10 p-1 backdrop-blur-md">
-              <button 
+              <button
                 onClick={() => setZoomScale(s => Math.min(5, s + 0.25))}
                 className="flex h-10 w-10 items-center justify-center rounded-full text-white hover:bg-white/20 transition-colors"
                 title="Zoom In"
               >
                 <ZoomIn className="h-5 w-5" />
               </button>
-              <button 
+              <button
                 onClick={() => setZoomScale(s => Math.max(0.5, s - 0.25))}
                 className="flex h-10 w-10 items-center justify-center rounded-full text-white hover:bg-white/20 transition-colors"
                 title="Zoom Out"
@@ -266,14 +266,14 @@ export function ProductModal({
                 <ZoomOut className="h-5 w-5" />
               </button>
               <div className="h-5 w-px bg-white/30 mx-1" />
-              <button 
+              <button
                 onClick={() => setZoomRotate(r => r - 90)}
                 className="flex h-10 w-10 items-center justify-center rounded-full text-white hover:bg-white/20 transition-colors"
                 title="Rotate Left"
               >
                 <RotateCcw className="h-5 w-5" />
               </button>
-              <button 
+              <button
                 onClick={() => setZoomRotate(r => r + 90)}
                 className="flex h-10 w-10 items-center justify-center rounded-full text-white hover:bg-white/20 transition-colors"
                 title="Rotate Right"
@@ -281,7 +281,7 @@ export function ProductModal({
                 <RotateCw className="h-5 w-5" />
               </button>
             </div>
-            <button 
+            <button
               onClick={() => setIsZoomOpen(false)}
               className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-md hover:bg-white/20 transition-colors"
               title="Tutup"

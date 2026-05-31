@@ -68,7 +68,7 @@ export function Navbar() {
           href={links.whatsapp}
           target="_blank"
           rel="noreferrer"
-          className="flex items-center gap-2 rounded-full bg-hf-rose px-5 py-2 text-sm font-bold text-white shadow-sm hover:bg-hf-rose-dark transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.98]"
+          className="flex items-center gap-2 rounded-full bg-[#ff3a70] px-5 py-2 text-sm font-bold text-white shadow-sm hover:bg-[#cf4067] transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.98]"
         >
           <Image
             src="/icon/icon-whatsapp-nobg.png"
@@ -109,9 +109,8 @@ export function Navbar() {
 
       {/* Mobile Dropdown Menu */}
       <div
-        className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out border-t border-hf-border/5 bg-white/95 backdrop-blur-md ${
-          isOpen ? 'max-h-[350px] opacity-100 py-4 px-6' : 'max-h-0 opacity-0 pointer-events-none'
-        }`}
+        className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out border-t border-hf-border/5 bg-white/95 backdrop-blur-md ${isOpen ? 'max-h-[350px] opacity-100 py-4 px-6' : 'max-h-0 opacity-0 pointer-events-none'
+          }`}
       >
         <nav className="flex flex-col gap-3.5">
           <a

@@ -51,7 +51,7 @@ export function CustomOrderCard() {
             target="_blank"
             rel="noreferrer"
             aria-label="Buat custom bouquet via WhatsApp"
-            className="-mt-2 lg:mt-0 inline-flex min-h-11 items-center gap-2 rounded-xl bg-hf-rose px-4 py-3 text-sm font-bold text-hf-cream transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-hf-rose-dark active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hf-rose"
+            className="-mt-2 lg:mt-0 inline-flex min-h-11 items-center gap-2 rounded-xl bg-[#ff3a70] px-4 py-3 text-sm font-bold text-hf-cream transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-[#cf4067] active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hf-rose"
           >
             Custom Bouquet Sekarang
             <ArrowUpRight className="h-4 w-4" />
