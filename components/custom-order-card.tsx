@@ -1,6 +1,7 @@
 import Image from 'next/image'
-import { ArrowUpRight, Sparkles } from 'lucide-react'
+import { ArrowUpRight } from 'lucide-react'
 import { links } from '@/data/links'
+import { CustomBouquetDialog } from '@/components/custom-bouquet-dialog'
 
 export function CustomOrderCard() {
   return (
@@ -46,16 +47,15 @@ export function CustomOrderCard() {
 
         {/* Right Side (Button) */}
         <div className="lg:shrink-0">
-          <a
-            href={links.whatsapp}
-            target="_blank"
-            rel="noreferrer"
-            aria-label="Buat custom bouquet via WhatsApp"
-            className="-mt-2 lg:mt-0 inline-flex min-h-11 items-center gap-2 rounded-xl bg-[#ff3a70] px-4 py-3 text-sm font-bold text-hf-cream transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-[#cf4067] active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hf-rose"
-          >
-            Custom Bouquet Sekarang
-            <ArrowUpRight className="h-4 w-4" />
-          </a>
+          <CustomBouquetDialog>
+            <button
+              aria-label="Buat custom bouquet"
+              className="-mt-2 lg:mt-0 inline-flex min-h-11 items-center gap-2 rounded-xl bg-[#ff3a70] px-4 py-3 text-sm font-bold text-hf-cream transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-[#cf4067] active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hf-rose"
+            >
+              Custom Bouquet Sekarang
+              <ArrowUpRight className="h-4 w-4" />
+            </button>
+          </CustomBouquetDialog>
         </div>
 
       </div>

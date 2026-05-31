@@ -1,5 +1,5 @@
 export const links = {
-  whatsapp: 'https://wa.me/62XXXXXXXXXXX',
+  whatsapp: 'https://api.whatsapp.com/send/?phone=628152008873&text=Halo.%0ASaya+ingin+memesan+bunga+custom',
   catalog: '#',
   instagram: 'https://instagram.com/hanfleurflorist.bekasi',
   tiktok: 'https://tiktok.com/@hanfleurflorist.bekasi',
