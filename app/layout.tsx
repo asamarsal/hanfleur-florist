@@ -16,15 +16,18 @@ const nunito = Nunito({
 })
 
 export const metadata: Metadata = {
-  title: 'Hanfleur Florist — Artificial Flower Bouquet',
+  title: 'Hanfleur Florist // Artificial Flower Bouquet',
   description:
     'Hanfleur Florist menghadirkan artificial flower bouquet yang cantik, tahan lama, dan dibuat dengan penuh detail. Pesan buket custom untuk momen spesialmu.',
-  generator: 'v0.app',
+  generator: 'My self',
+  icons: {
+    icon: '/images/hanfleur-logo-transparent.png',
+  },
   openGraph: {
-    title: 'Hanfleur Florist — Artificial Flower Bouquet',
+    title: 'Hanfleur Florist // Artificial Flower Bouquet',
     description:
       'Buket bunga artificial cantik dan tahan lama untuk hadiah ulang tahun, wisuda, anniversary, dan momen spesial lainnya.',
-    images: ['/images/hanfleur-bouquet.png'],
+    images: ['/images/hanfleur-logo.png'],
   },
 }
 
