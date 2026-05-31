@@ -18,7 +18,6 @@ const products: Product[] = [
       'Artificial flower premium',
       'Gold heart balloon',
       'Pink box arrangement',
-      'Gift-ready packaging',
       'Bisa request kartu ucapan',
     ],
     suitableFor: [
