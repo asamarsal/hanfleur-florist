@@ -5,6 +5,7 @@ import { Navbar } from '@/components/navbar'
 import { RunningText } from '@/components/running-text'
 import { BestSellers } from '@/components/best-sellers'
 import { Testimonials } from '@/components/testimonials'
+import { Faq } from '@/components/faq'
 
 export default function Page() {
   return (
@@ -20,6 +21,9 @@ export default function Page() {
           <BestSellers />
           <Testimonials />
         </div>
+
+        {/* FAQ Section */}
+        <Faq />
 
         <Footer />
       </div>
