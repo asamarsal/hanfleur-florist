@@ -63,7 +63,7 @@ export function Faq() {
   }
 
   return (
-    <section id="faq" className="relative mt-8 sm:mt-12 rounded-[32px] bg-gradient-to-bl from-[#f46d95] to-[#f9a2bf] p-6 sm:p-8 lg:p-10 shadow-[0_20px_60px_rgba(185,78,104,0.15)] border border-white/40">
+    <section id="faq" className="relative my-10 sm:my-16 rounded-[32px] bg-gradient-to-bl from-[#f46d95] to-[#f9a2bf] p-6 sm:p-8 lg:p-10 shadow-[0_20px_60px_rgba(185,78,104,0.15)] border border-white/40">
       <style>{`
         @keyframes float-butterfly {
           0%, 100% { transform: translateY(0); }
@@ -80,28 +80,28 @@ export function Faq() {
         alt=""
         width={300}
         height={300}
-        className="absolute -top-16 -left-6 w-40 sm:w-56 lg:w-72 opacity-95 rotate-[-10deg] pointer-events-none select-none"
+        className="absolute -top-10 sm:-top-16 -left-4 sm:-left-6 w-28 sm:w-48 lg:w-72 opacity-95 rotate-[-10deg] pointer-events-none select-none"
       />
       <Image
         src="/faq/butterfly-right-faq.png"
         alt=""
         width={200}
         height={200}
-        className="absolute top-6 right-6 w-24 sm:w-32 lg:w-40 opacity-85 pointer-events-none select-none drop-shadow-sm animate-float"
+        className="hidden sm:block absolute top-6 right-6 w-24 sm:w-32 lg:w-40 opacity-85 pointer-events-none select-none drop-shadow-sm animate-float"
       />
       <Image
         src="/faq/butterfly-left-faq.png"
         alt=""
         width={200}
         height={200}
-        className="absolute top-[48%] lg:top-[52%] left-6 sm:left-4 lg:left-8 w-24 sm:w-32 lg:w-40 opacity-95 pointer-events-none select-none drop-shadow-lg z-20 animate-float"
+        className="hidden sm:block absolute top-[48%] lg:top-[52%] left-6 sm:left-4 lg:left-8 w-24 sm:w-32 lg:w-40 opacity-95 pointer-events-none select-none drop-shadow-lg z-20 animate-float"
       />
       <Image
         src="/faq/flower-rightdown-faq.png"
         alt=""
         width={300}
         height={300}
-        className="absolute -bottom-20 -right-12 w-40 sm:w-56 lg:w-72 opacity-100 pointer-events-none select-none drop-shadow-xl z-20"
+        className="absolute -bottom-10 sm:-bottom-20 -right-8 sm:-right-12 w-28 sm:w-48 lg:w-72 opacity-100 pointer-events-none select-none drop-shadow-xl z-20"
       />
 
       {/* Header */}
