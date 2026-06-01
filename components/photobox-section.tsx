@@ -177,7 +177,7 @@ export function PhotoboxSection() {
               {/* Left Arrow Button */}
               <button
                 onClick={() => scroll('left')}
-                className="absolute left-2 lg:-left-5 top-1/2 -translate-y-1/2 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-[#db3563]/30 bg-white/30 backdrop-blur-md shadow-sm text-[#db3563] transition-transform active:scale-90 z-30"
+                className="absolute -left-2 sm:-left-3 lg:-left-4 top-1/2 -translate-y-1/2 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-[#db3563]/30 bg-white/30 backdrop-blur-md shadow-sm text-[#db3563] transition-transform active:scale-90 z-30"
                 aria-label="Scroll left"
               >
                 <ChevronLeft className="h-6 w-6 sm:h-8 sm:w-8" />
@@ -210,7 +210,7 @@ export function PhotoboxSection() {
               {/* Right Arrow Button */}
               <button
                 onClick={() => scroll('right')}
-                className="absolute right-2 lg:-right-5 top-1/2 -translate-y-1/2 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-[#db3563]/30 bg-white/30 backdrop-blur-md shadow-sm text-[#db3563] transition-transform active:scale-90 z-30"
+                className="absolute -right-2 sm:-right-3 lg:-right-4 top-1/2 -translate-y-1/2 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full border border-[#db3563]/30 bg-white/30 backdrop-blur-md shadow-sm text-[#db3563] transition-transform active:scale-90 z-30"
                 aria-label="Scroll right"
               >
                 <ChevronRight className="h-6 w-6 sm:h-8 sm:w-8" />
