@@ -7,6 +7,7 @@ import { BestSellers } from '@/components/best-sellers'
 import { Testimonials } from '@/components/testimonials'
 import { Faq } from '@/components/faq'
 import { StoreLocation } from '@/components/store-location'
+import { PhotoboxSection } from '@/components/photobox-section'
 
 export default function Page() {
   return (
@@ -26,6 +27,9 @@ export default function Page() {
 
           {/* FAQ Section */}
           <Faq />
+
+          {/* Photobox Section */}
+          <PhotoboxSection />
 
           {/* Map Section */}
           <StoreLocation />
