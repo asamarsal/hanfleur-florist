@@ -22,6 +22,13 @@ export function HanfleurProfileCard() {
   const prevSlide = () => setActiveIndex((prev) => (prev - 1 + totalSlides) % totalSlides)
 
   useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % totalSlides)
+    }, 8000)
+    return () => clearInterval(timer)
+  }, [activeIndex])
+
+  useEffect(() => {
     const reduceMotion = window.matchMedia(
       '(prefers-reduced-motion: reduce)'
     ).matches
@@ -99,18 +106,17 @@ export function HanfleurProfileCard() {
         {/* Left column: logo + bouquet */}
         <div className="flex flex-col items-center">
           <BouquetHero activeIndex={activeIndex} nextSlide={nextSlide} prevSlide={prevSlide} />
-          
+
           {/* Desktop Slider Dots (Under Image) */}
           <div className="hidden lg:flex items-center justify-center gap-1.5 mt-4">
             {[0, 1, 2].map((idx) => (
               <button
                 key={idx}
                 onClick={() => setActiveIndex(idx)}
-                className={`rounded-full transition-all duration-300 ${
-                  activeIndex === idx 
-                    ? 'w-4 h-1.5 bg-[#db3563] ring-[1px] ring-white shadow-sm' 
+                className={`rounded-full transition-all duration-300 ${activeIndex === idx
+                    ? 'w-4 h-1.5 bg-[#db3563] ring-[1px] ring-white shadow-sm'
                     : 'w-1.5 h-1.5 bg-[#db3563]/30 hover:bg-[#db3563]/50'
-                }`}
+                  }`}
                 aria-label={`Go to slide ${idx + 1}`}
               />
             ))}
@@ -152,11 +158,10 @@ export function HanfleurProfileCard() {
                 <button
                   key={idx}
                   onClick={() => setActiveIndex(idx)}
-                  className={`rounded-full transition-all duration-300 ${
-                    activeIndex === idx 
-                      ? 'w-4 h-1.5 bg-[#db3563] ring-[1px] ring-white shadow-sm' 
+                  className={`rounded-full transition-all duration-300 ${activeIndex === idx
+                      ? 'w-4 h-1.5 bg-[#db3563] ring-[1px] ring-white shadow-sm'
                       : 'w-1.5 h-1.5 bg-[#db3563]/30 hover:bg-[#db3563]/50'
-                  }`}
+                    }`}
                   aria-label={`Go to slide ${idx + 1}`}
                 />
               ))}

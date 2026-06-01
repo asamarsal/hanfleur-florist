@@ -68,7 +68,7 @@ export function BouquetHero({ activeIndex = 0, nextSlide, prevSlide }: BouquetHe
         >
           <div className="w-full overflow-hidden">
             <div
-              className="flex w-full transition-transform duration-500 ease-out"
+              className="flex w-full transition-transform duration-800 ease-in-out"
               style={{ transform: `translateX(-${activeIndex * 100}%)` }}
             >
               {covers.map((src, i) => (
@@ -79,7 +79,7 @@ export function BouquetHero({ activeIndex = 0, nextSlide, prevSlide }: BouquetHe
                     width={420}
                     height={420}
                     className="object-contain pointer-events-none"
-                    priority={i === 0}
+                    priority
                     draggable="false"
                   />
                 </div>
