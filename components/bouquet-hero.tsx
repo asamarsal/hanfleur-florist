@@ -38,13 +38,13 @@ export function BouquetHero({ activeIndex = 0, nextSlide, prevSlide }: BouquetHe
   }
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      <div className="js-logo">
+    <div className="flex flex-col items-center gap-2">
+      <div className="js-logo mt-[-8px] lg:mt-[-12px]">
         <Image
           src="/images/hanfleur-logo-transparent.png"
           alt="Logo Hanfleur Florist"
           width={320}
-          height={320}
+          height={300}
           className="h-auto w-full max-w-[180px] sm:max-w-[220px]"
           priority
         />
@@ -76,8 +76,8 @@ export function BouquetHero({ activeIndex = 0, nextSlide, prevSlide }: BouquetHe
                   <Image
                     src={src}
                     alt={`Hanfleur cover ${i + 1}`}
-                    width={420}
-                    height={420}
+                    width={400}
+                    height={400}
                     className="object-contain pointer-events-none"
                     priority
                     draggable="false"

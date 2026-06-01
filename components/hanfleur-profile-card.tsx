@@ -114,8 +114,8 @@ export function HanfleurProfileCard() {
                 key={idx}
                 onClick={() => setActiveIndex(idx)}
                 className={`rounded-full transition-all duration-300 ${activeIndex === idx
-                    ? 'w-4 h-1.5 bg-[#db3563] ring-[1px] ring-white shadow-sm'
-                    : 'w-1.5 h-1.5 bg-[#db3563]/30 hover:bg-[#db3563]/50'
+                  ? 'w-4 h-1.5 bg-[#db3563] ring-[1px] ring-white shadow-sm'
+                  : 'w-1.5 h-1.5 bg-[#db3563]/30 hover:bg-[#db3563]/50'
                   }`}
                 aria-label={`Go to slide ${idx + 1}`}
               />
@@ -124,9 +124,9 @@ export function HanfleurProfileCard() {
         </div>
 
         {/* Right column: content */}
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-4">
           <div className="flex flex-col items-center gap-4 text-center lg:items-start lg:text-left">
-            <div className="js-badge inline-flex items-center gap-2 rounded-full border border-hf-accent/40 bg-hf-cream/80 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-hf-rose shadow-sm">
+            <div className="js-badge inline-flex items-center gap-2 rounded-full border border-hf-accent/40 bg-hf-cream/80 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-hf-rose shadow-sm -mt-2">
               Artificial Flower Bouquet
             </div>
 
@@ -159,8 +159,8 @@ export function HanfleurProfileCard() {
                   key={idx}
                   onClick={() => setActiveIndex(idx)}
                   className={`rounded-full transition-all duration-300 ${activeIndex === idx
-                      ? 'w-4 h-1.5 bg-[#db3563] ring-[1px] ring-white shadow-sm'
-                      : 'w-1.5 h-1.5 bg-[#db3563]/30 hover:bg-[#db3563]/50'
+                    ? 'w-4 h-1.5 bg-[#db3563] ring-[1px] ring-white shadow-sm'
+                    : 'w-1.5 h-1.5 bg-[#db3563]/30 hover:bg-[#db3563]/50'
                     }`}
                   aria-label={`Go to slide ${idx + 1}`}
                 />
