@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { ChevronDown } from 'lucide-react'
@@ -15,6 +15,11 @@ gsap.registerPlugin(ScrollTrigger)
 
 export function HanfleurProfileCard() {
   const sectionRef = useRef<HTMLDivElement>(null)
+  const [activeIndex, setActiveIndex] = useState(0)
+  const totalSlides = 3
+
+  const nextSlide = () => setActiveIndex((prev) => (prev + 1) % totalSlides)
+  const prevSlide = () => setActiveIndex((prev) => (prev - 1 + totalSlides) % totalSlides)
 
   useEffect(() => {
     const reduceMotion = window.matchMedia(
@@ -92,8 +97,24 @@ export function HanfleurProfileCard() {
     >
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_0.95fr] lg:items-start lg:gap-10">
         {/* Left column: logo + bouquet */}
-        <div>
-          <BouquetHero />
+        <div className="flex flex-col items-center">
+          <BouquetHero activeIndex={activeIndex} nextSlide={nextSlide} prevSlide={prevSlide} />
+          
+          {/* Desktop Slider Dots (Under Image) */}
+          <div className="hidden lg:flex items-center justify-center gap-1.5 mt-4">
+            {[0, 1, 2].map((idx) => (
+              <button
+                key={idx}
+                onClick={() => setActiveIndex(idx)}
+                className={`rounded-full transition-all duration-300 ${
+                  activeIndex === idx 
+                    ? 'w-4 h-1.5 bg-[#db3563] ring-[1px] ring-white shadow-sm' 
+                    : 'w-1.5 h-1.5 bg-[#db3563]/30 hover:bg-[#db3563]/50'
+                }`}
+                aria-label={`Go to slide ${idx + 1}`}
+              />
+            ))}
+          </div>
         </div>
 
         {/* Right column: content */}
@@ -124,6 +145,22 @@ export function HanfleurProfileCard() {
                 <ChevronDown className="h-4 w-4 transition-transform duration-300 group-hover:translate-y-0.5" />
               </span>
             </button>
+
+            {/* Mobile Slider Dots (Under Button) */}
+            <div className="flex lg:hidden items-center gap-1.5 mt-2 mb-2">
+              {[0, 1, 2].map((idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setActiveIndex(idx)}
+                  className={`rounded-full transition-all duration-300 ${
+                    activeIndex === idx 
+                      ? 'w-4 h-1.5 bg-[#db3563] ring-[1px] ring-white shadow-sm' 
+                      : 'w-1.5 h-1.5 bg-[#db3563]/30 hover:bg-[#db3563]/50'
+                  }`}
+                  aria-label={`Go to slide ${idx + 1}`}
+                />
+              ))}
+            </div>
 
             <div className="js-hero-copy flex flex-col gap-3 mb-6 mt-4 lg:mt-2">
               <h1 className="text-balance font-serif text-3xl font-bold leading-tight tracking-tight text-hf-rose sm:text-4xl lg:text-[2.75rem]">
