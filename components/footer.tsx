@@ -37,16 +37,16 @@ export function Footer() {
           <div>
             <h3 className="text-xs font-bold text-[#c74769] mb-3 uppercase tracking-[0.2em]">Temukan Kami</h3>
             <div className="flex items-center md:justify-end gap-3">
-              <a href={links.instagram} target="_blank" rel="noreferrer" className="flex h-10 w-10 items-center justify-center rounded-full bg-transparent shadow-sm border border-hf-border/30 hover:-translate-y-1 transition-transform">
+              <a href={links.instagram} target="_blank" rel="noreferrer" className="flex h-10 w-10 items-center justify-center bg-transparent hover:-translate-y-1 transition-transform">
                 <Image src="/icon/icon-instagram.png" alt="Instagram" width={24} height={24} className="h-10 w-10 object-contain" />
               </a>
-              <a href={links.tiktok} target="_blank" rel="noreferrer" className="flex h-10 w-10 items-center justify-center rounded-full bg-transparent shadow-sm border border-hf-border/30 hover:-translate-y-1 transition-transform">
+              <a href={links.tiktok} target="_blank" rel="noreferrer" className="flex h-10 w-10 items-center justify-center bg-transparent hover:-translate-y-1 transition-transform">
                 <Image src="/icon/icon-tiktok.png" alt="TikTok" width={24} height={24} className="h-10 w-10 object-contain" />
               </a>
-              <a href={links.whatsapp} className="flex h-10 w-10 items-center justify-center rounded-full bg-transparent shadow-sm border border-hf-border/30 hover:-translate-y-1 transition-transform">
+              <a href={links.whatsapp} className="flex h-10 w-10 items-center justify-center bg-transparent hover:-translate-y-1 transition-transform">
                 <Image src="/icon/icon-whatsapp.png" alt="Whatsapp" width={24} height={24} className="h-10 w-10 object-contain" />
               </a>
-              <a href={links.email} className="flex h-10 w-10 items-center justify-center rounded-full bg-transparent shadow-sm border border-hf-border/30 hover:-translate-y-1 transition-transform">
+              <a href={links.email} className="flex h-10 w-10 items-center justify-center bg-transparent hover:-translate-y-1 transition-transform">
                 <Image src="/icon/icon-email.png" alt="Email" width={24} height={24} className="h-10 w-10 object-contain" />
               </a>
             </div>
