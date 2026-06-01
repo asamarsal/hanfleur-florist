@@ -200,7 +200,7 @@ export function HanfleurProfileCard() {
       </div>
 
       {/* Custom Order Card (full width below columns on desktop) */}
-      <div className="mt-6 lg:mt-8">
+      <div id="custom-bouquet" className="mt-6 lg:mt-8 scroll-mt-24">
         <CustomOrderCard />
       </div>
     </section>

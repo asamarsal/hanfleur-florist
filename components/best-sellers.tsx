@@ -160,7 +160,7 @@ export function BestSellers() {
   }
 
   return (
-    <div className="flex flex-col gap-6 w-full">
+    <div id="katalog" className="flex flex-col gap-6 w-full scroll-mt-24">
       {/* Title & Controls */}
       <div className="flex items-end justify-between">
         <div className="text-left">

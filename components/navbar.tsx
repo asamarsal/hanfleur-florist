@@ -5,9 +5,19 @@ import Image from 'next/image'
 import { Menu, X, Volume2, VolumeX } from 'lucide-react'
 import { links } from '@/data/links'
 
+const navItems = [
+  { label: 'Beranda', href: '#' },
+  { label: 'Katalog', href: '#katalog' },
+  { label: 'Custom Bouquet', href: '#custom-bouquet' },
+  { label: 'Testimoni', href: '#testimonials' },
+  { label: 'Tentang Kami', href: '#about' },
+  { label: 'FAQ', href: '#faq' },
+]
+
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [activeItem, setActiveItem] = useState('Beranda')
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
   useEffect(() => {
@@ -57,6 +67,54 @@ export function Navbar() {
     }
   }, [])
 
+  // Intersection Observer to update active item on scroll
+  useEffect(() => {
+    const observerOptions = {
+      root: null,
+      rootMargin: '-30% 0px -60% 0px',
+      threshold: 0,
+    }
+
+    const observerCallback = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const id = entry.target.getAttribute('id')
+          if (id === 'katalog') setActiveItem('Katalog')
+          else if (id === 'custom-bouquet') setActiveItem('Custom Bouquet')
+          else if (id === 'testimonials') setActiveItem('Testimoni')
+          else if (id === 'about') setActiveItem('Tentang Kami')
+          else if (id === 'faq') setActiveItem('FAQ')
+        }
+      })
+    }
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions)
+
+    const targets = [
+      document.getElementById('katalog'),
+      document.getElementById('custom-bouquet'),
+      document.getElementById('testimonials'),
+      document.getElementById('about'),
+      document.getElementById('faq'),
+    ]
+
+    targets.forEach((target) => {
+      if (target) observer.observe(target)
+    })
+
+    const handleScroll = () => {
+      if (window.scrollY < 120) {
+        setActiveItem('Beranda')
+      }
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+
+    return () => {
+      observer.disconnect()
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
+
   const toggleMusic = (e: React.MouseEvent) => {
     e.stopPropagation()
     if (!audioRef.current) return
@@ -65,6 +123,29 @@ export function Navbar() {
       audioRef.current.pause()
     } else {
       audioRef.current.play()
+    }
+  }
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string, label: string) => {
+    setActiveItem(label)
+    setIsOpen(false)
+    if (href.startsWith('#') && href.length > 1) {
+      e.preventDefault()
+      const element = document.querySelector(href)
+      if (element) {
+        const elementPosition = element.getBoundingClientRect().top + window.scrollY
+        const navbarOffset = 82 // 76px navbar height + offset
+        window.scrollTo({
+          top: elementPosition - navbarOffset,
+          behavior: 'smooth'
+        })
+      }
+    } else if (href === '#') {
+      e.preventDefault()
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      })
     }
   }
 
@@ -82,56 +163,37 @@ export function Navbar() {
           onPause={() => setIsPlaying(false)}
         />
         {/* Desktop Navbar */}
-        <div className="hidden lg:flex w-full items-center justify-between py-4 px-12">
+        <div className="hidden lg:flex w-full items-center justify-between py-3 px-12">
           {/* Logo */}
-          <a href="#" className="flex flex-col text-left">
-            <span className="font-serif text-2xl font-bold text-hf-rose leading-none tracking-tight">
-              Hanfleur
-            </span>
-            <span className="text-[10px] font-sans font-bold tracking-[0.35em] uppercase text-hf-accent mt-1">
-              Florist
-            </span>
+          <a href="#" onClick={(e) => handleNavClick(e, '#', 'Beranda')} className="flex items-center">
+            <Image
+              src="/images/hanfleur-logo-startallign-transparent.png"
+              alt="Logo Hanfleur Florist"
+              width={80}
+              height={20}
+              className="h-auto w-[80px]"
+              priority
+            />
           </a>
 
           {/* Navigation Menu */}
           <nav className="flex items-center gap-8">
-            <a
-              href="#"
-              className="relative text-sm font-bold text-hf-rose transition-colors duration-200"
-            >
-              Beranda
-              <span className="absolute bottom-[-20px] left-0 h-[3px] w-full rounded-full bg-hf-rose" />
-            </a>
-            <a
-              href="#order-section"
-              className="text-sm font-semibold text-hf-text/80 hover:text-hf-rose transition-colors duration-200"
-            >
-              Katalog
-            </a>
-            <a
-              href="#order-section"
-              className="text-sm font-semibold text-hf-text/80 hover:text-hf-rose transition-colors duration-200"
-            >
-              Custom Bouquet
-            </a>
-            <a
-              href="#testimonials"
-              className="text-sm font-semibold text-hf-text/80 hover:text-hf-rose transition-colors duration-200"
-            >
-              Testimoni
-            </a>
-            <a
-              href="#about"
-              className="text-sm font-semibold text-hf-text/80 hover:text-hf-rose transition-colors duration-200"
-            >
-              Tentang Kami
-            </a>
-            <a
-              href="#faq"
-              className="text-sm font-semibold text-hf-text/80 hover:text-hf-rose transition-colors duration-200"
-            >
-              FAQ
-            </a>
+            {navItems.map((item) => (
+              <a
+                key={item.label}
+                href={item.href}
+                onClick={(e) => handleNavClick(e, item.href, item.label)}
+                className={`relative text-sm transition-all duration-200 ${activeItem === item.label
+                  ? 'font-bold text-hf-rose'
+                  : 'font-semibold text-hf-text/80 hover:text-hf-rose'
+                  }`}
+              >
+                {item.label}
+                {activeItem === item.label && (
+                  <span className="absolute bottom-[-20px] left-0 h-[3px] w-full rounded-full bg-hf-rose transition-all duration-300" />
+                )}
+              </a>
+            ))}
           </nav>
 
           {/* Action Buttons */}
@@ -163,15 +225,17 @@ export function Navbar() {
         </div>
 
         {/* Mobile Navbar */}
-        <div className="flex lg:hidden w-full items-center justify-between py-3 px-4 sm:px-6">
+        <div className="flex lg:hidden w-full items-center justify-between py-2 px-4 sm:px-6">
           {/* Logo */}
-          <a href="#" className="flex flex-col text-left">
-            <span className="font-serif text-xl font-bold text-hf-rose leading-none tracking-tight">
-              Hanfleur
-            </span>
-            <span className="text-[9px] font-sans font-bold tracking-[0.35em] uppercase text-hf-accent mt-0.5">
-              Florist
-            </span>
+          <a href="#" onClick={(e) => handleNavClick(e, '#', 'Beranda')} className="flex flex-col text-left">
+            <Image
+              src="/images/hanfleur-logo-startallign-transparent.png"
+              alt="Logo Hanfleur Florist"
+              width={110}
+              height={30}
+              className="h-auto w-[70px]"
+              priority
+            />
           </a>
 
           {/* Actions */}
@@ -205,48 +269,19 @@ export function Navbar() {
             }`}
         >
           <nav className="flex flex-col gap-3.5">
-            <a
-              href="/"
-              onClick={() => setIsOpen(false)}
-              className="text-sm font-bold text-hf-rose"
-            >
-              Beranda
-            </a>
-            <a
-              href="#order-section"
-              onClick={() => setIsOpen(false)}
-              className="text-sm font-semibold text-hf-text/80 hover:text-hf-rose transition-colors duration-200"
-            >
-              Katalog
-            </a>
-            <a
-              href="#order-section"
-              onClick={() => setIsOpen(false)}
-              className="text-sm font-semibold text-hf-text/80 hover:text-hf-rose transition-colors duration-200"
-            >
-              Custom Bouquet
-            </a>
-            <a
-              href="#testimonials"
-              onClick={() => setIsOpen(false)}
-              className="text-sm font-semibold text-hf-text/80 hover:text-hf-rose transition-colors duration-200"
-            >
-              Testimoni
-            </a>
-            <a
-              href="#about"
-              onClick={() => setIsOpen(false)}
-              className="text-sm font-semibold text-hf-text/80 hover:text-hf-rose transition-colors duration-200"
-            >
-              Tentang Kami
-            </a>
-            <a
-              href="#faq"
-              onClick={() => setIsOpen(false)}
-              className="text-sm font-semibold text-hf-text/80 hover:text-hf-rose transition-colors duration-200"
-            >
-              FAQ
-            </a>
+            {navItems.map((item) => (
+              <a
+                key={item.label}
+                href={item.href}
+                onClick={(e) => handleNavClick(e, item.href, item.label)}
+                className={`text-sm transition-colors duration-200 ${activeItem === item.label
+                  ? 'font-bold text-hf-rose'
+                  : 'font-semibold text-hf-text/80 hover:text-hf-rose'
+                  }`}
+              >
+                {item.label}
+              </a>
+            ))}
             <a
               href={links.whatsapp}
               target="_blank"

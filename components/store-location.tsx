@@ -18,7 +18,7 @@ export function StoreLocation() {
   }
 
   return (
-    <section className="relative mt-8 sm:mt-12 rounded-[32px] border border-white/40 bg-white/50 p-6 sm:p-8 backdrop-blur-sm shadow-[0_8px_30px_rgba(185,78,104,0.06)]">
+    <section id="about" className="relative mt-8 sm:mt-12 rounded-[32px] border border-white/40 bg-white/50 p-6 sm:p-8 backdrop-blur-sm shadow-[0_8px_30px_rgba(185,78,104,0.06)] scroll-mt-24">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="text-left">
           <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-hf-rose/80">
