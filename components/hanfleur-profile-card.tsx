@@ -116,10 +116,10 @@ export function HanfleurProfileCard() {
                   })
                 }
               }}
-              className="js-badge glass-shine-btn group relative flex lg:hidden cursor-pointer items-center gap-1.5 rounded-full border border-white/50 bg-gradient-to-r from-hf-rose/85 to-hf-rose/90 backdrop-blur-md px-6 py-2 text-sm font-bold text-white shadow-[0_8px_20px_rgba(185,78,104,0.25)] transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_12px_24px_rgba(185,78,104,0.35)] active:scale-[0.98] outline-none"
+              className="js-badge glass-shine-btn group relative flex lg:hidden cursor-pointer items-center justify-center gap-2 rounded-full bg-[#ff3a70] px-8 py-3 text-sm font-bold text-white shadow-[0_5px_0_#cf4067,0_10px_20px_rgba(255,58,112,0.3)] transition-all duration-150 ease-out hover:-translate-y-0.5 hover:shadow-[0_6px_0_#cf4067,0_12px_24px_rgba(255,58,112,0.4)] active:translate-y-[5px] active:shadow-[0_0px_0_#cf4067,0_5px_10px_rgba(255,58,112,0.2)] outline-none overflow-hidden"
             >
               <span className="shine-overlay" />
-              <span className="relative z-10 flex items-center gap-1.5">
+              <span className="relative z-10 flex items-center gap-2 tracking-wide">
                 Pesan Sekarang
                 <ChevronDown className="h-4 w-4 transition-transform duration-300 group-hover:translate-y-0.5" />
               </span>
