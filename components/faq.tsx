@@ -160,7 +160,17 @@ export function Faq() {
           <span>✦</span>
         </div>
         <h2 className="font-serif text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-white leading-tight">
-          Pertanyaan yang<br />Sering Diajukan 💖
+          Pertanyaan yang<br />
+          <span className="inline-flex items-center gap-2">
+            Sering Diajukan
+            <Image
+              src="/icon/icon-love-shine.png"
+              alt="Love Shine"
+              width={40}
+              height={40}
+              className="h-12 w-12 sm:h-10 sm:w-10 lg:h-12 lg:w-12 object-contain"
+            />
+          </span>
         </h2>
       </div>
 

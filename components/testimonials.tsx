@@ -45,8 +45,15 @@ export function Testimonials() {
         <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-hf-rose/80">
           ✦ APA KATA MEREKA ✦
         </span>
-        <h2 className="mt-1 font-serif text-2xl lg:text-3xl font-bold text-hf-rose">
-          Testimoni Pelanggan 💖
+        <h2 className="mt-1 font-serif text-2xl lg:text-3xl font-bold text-hf-rose flex items-center justify-center lg:justify-start gap-2">
+          Testimoni Pelanggan
+          <Image
+            src="/icon/icon-love-shine.png"
+            alt="Love Shine"
+            width={32}
+            height={32}
+            className="h-7 w-7 lg:h-8 lg:w-8 object-contain"
+          />
         </h2>
       </div>
 
