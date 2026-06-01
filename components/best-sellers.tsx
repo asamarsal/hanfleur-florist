@@ -101,6 +101,44 @@ const products: Product[] = [
       { label: 'Pertemanan', icon: 'gift' },
     ],
   },
+  {
+    name: 'Violet Dream',
+    price: 'Rp 150.000',
+    tag: 'Favorite',
+    tagBg: 'bg-[#f3e8ff] text-[#9333ea] border-[#d8b4fe]',
+    desc: 'Kombinasi warna ungu dan biru yang memberikan kesan mewah dan menenangkan.',
+    image: '/gallery/flower-6.png',
+    images: ['/gallery/flower-6.png', '/gallery/flower-7.png', '/gallery/flower-1.png', '/gallery/flower-2.png', '/gallery/flower-3.png'],
+    details: [
+      'Purple & Blue theme',
+      'Exclusive satin ribbon',
+      'Premium wrapping',
+    ],
+    suitableFor: [
+      { label: 'Ulang Tahun', icon: 'cake' },
+      { label: 'Anniversary', icon: 'heart' },
+      { label: 'Kelulusan', icon: 'gift' },
+    ],
+  },
+  {
+    name: 'Classic White',
+    price: 'Rp 150.000',
+    tag: 'Elegant',
+    tagBg: 'bg-[#f1f5f9] text-[#475569] border-[#cbd5e1]',
+    desc: 'Kesederhanaan yang indah dalam balutan putih murni, melambangkan ketulusan.',
+    image: '/gallery/flower-7.png',
+    images: ['/gallery/flower-7.png', '/gallery/flower-1.png', '/gallery/flower-2.png', '/gallery/flower-3.png', '/gallery/flower-4.png'],
+    details: [
+      'Pure White roses',
+      'Minimalist design',
+      'Eco-friendly wrapper',
+    ],
+    suitableFor: [
+      { label: 'Pernikahan', icon: 'heart' },
+      { label: 'Simpati', icon: 'heart' },
+      { label: 'Terima Kasih', icon: 'gift' },
+    ],
+  },
 ]
 
 export function BestSellers() {
