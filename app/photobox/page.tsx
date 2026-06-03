@@ -1,0 +1,415 @@
+'use client'
+
+import { useRef, useState, useEffect } from 'react'
+import Image from 'next/image'
+import { Camera, RefreshCw, SwitchCamera, ArrowRight, CheckCircle2, Sparkles, Smile, Maximize, Sun, Heart } from 'lucide-react'
+import { Navbar } from '@/components/navbar'
+import { Footer } from '@/components/footer'
+import { DecorativeBackground } from '@/components/decorative-background'
+
+const photoboxDesigns = [
+  { id: 1, file: 'example1-pb.png', name: 'Romantic Love' },
+  { id: 2, file: 'example3-pb.png', name: 'Best Friends' },
+  { id: 3, file: 'example4-pb.png', name: 'Blush Flowers' },
+  { id: 4, file: 'example5-pb.png', name: 'Pink Dream' },
+  { id: 5, file: 'example6-pb.png', name: 'Golden Love' },
+  { id: 6, file: 'example7-pb.png', name: 'Floral Magic' },
+  { id: 7, file: 'example8-pb.png', name: 'Cute Pastel' },
+  { id: 8, file: 'example9-pb.png', name: 'Spring Garden' },
+  { id: 9, file: 'example10-pb.png', name: 'Rose Romance' },
+  { id: 10, file: 'example11-pb.png', name: 'Happy Moments' },
+]
+
+export default function PhotoboxPage() {
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [stream, setStream] = useState<MediaStream | null>(null)
+  const [hasPermission, setHasPermission] = useState<boolean | null>(null)
+
+  const [numPhotos, setNumPhotos] = useState<3 | 4>(4)
+  const [selectedDesignId, setSelectedDesignId] = useState(1)
+  const [takenPhotos, setTakenPhotos] = useState<string[]>([])
+
+  const [isRecording, setIsRecording] = useState(false)
+  const [countdown, setCountdown] = useState<number | null>(null)
+  const [timerDuration, setTimerDuration] = useState<3 | 5 | 10>(10)
+
+  // Start Camera
+  const startCamera = async () => {
+    try {
+      const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+      setStream(mediaStream)
+      setHasPermission(true)
+      if (videoRef.current) {
+        videoRef.current.srcObject = mediaStream
+      }
+    } catch (err) {
+      console.error("Error accessing camera:", err)
+      setHasPermission(false)
+    }
+  }
+
+  // Toggle Camera
+  const toggleCamera = async () => {
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop())
+      setStream(null)
+      if (videoRef.current) {
+        videoRef.current.srcObject = null
+      }
+    } else {
+      await startCamera()
+    }
+  }
+
+  // Cycle Timer
+  const cycleTimer = () => {
+    if (isRecording) return
+    setTimerDuration(prev => {
+      if (prev === 3) return 5
+      if (prev === 5) return 10
+      return 3
+    })
+  }
+
+  // Reset captured photos
+  const resetPhotos = () => {
+    setTakenPhotos([])
+    setIsRecording(false)
+    setCountdown(null)
+  }
+
+  // Take photo countdown trigger
+  const takePhoto = () => {
+    if (!stream || isRecording) return
+    // Reset if we already took photos and want to take a new strip
+    if (takenPhotos.length >= numPhotos) {
+      setTakenPhotos([])
+    }
+    setIsRecording(true)
+    setCountdown(timerDuration)
+  }
+
+  // Countdown timer and capture frame logic
+  useEffect(() => {
+    if (countdown === null) return
+
+    if (countdown > 0) {
+      const timer = setTimeout(() => {
+        setCountdown(countdown - 1)
+      }, 1000)
+      return () => clearTimeout(timer)
+    }
+
+    if (countdown === 0) {
+      // Capture frame
+      if (videoRef.current) {
+        const video = videoRef.current
+        const canvas = document.createElement('canvas')
+        canvas.width = video.videoWidth || 640
+        canvas.height = video.videoHeight || 480
+        const ctx = canvas.getContext('2d')
+        if (ctx) {
+          // Mirror image
+          ctx.translate(canvas.width, 0)
+          ctx.scale(-1, 1)
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+          const dataUrl = canvas.toDataURL('image/png')
+
+          setTakenPhotos(prev => {
+            const nextPhotos = [...prev, dataUrl]
+            if (nextPhotos.length >= numPhotos) {
+              setIsRecording(false)
+              setCountdown(null)
+            } else {
+              // Next picture automatic trigger
+              setTimeout(() => {
+                setCountdown(timerDuration)
+              }, 1500)
+            }
+            return nextPhotos
+          })
+        }
+      }
+    }
+  }, [countdown, timerDuration, numPhotos, stream])
+
+  useEffect(() => {
+    startCamera()
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop())
+      }
+    }
+  }, [])
+
+  // Create an array for the strip preview
+  const previewSlots = Array.from({ length: numPhotos })
+
+  return (
+    <main className="relative min-h-screen bg-gradient-to-br from-hf-bg via-[#fadde4] to-hf-secondary pt-[50px] lg:pt-[72px] flex flex-col">
+      <DecorativeBackground />
+      <Navbar />
+
+      <div className="w-full px-4 pt-2 pb-12 sm:px-6 lg:px-8 flex-grow flex flex-col relative">
+        {/* Main Card */}
+        <div className="relative rounded-3xl bg-white/70 backdrop-blur-md border border-white/60 shadow-sm p-6 lg:p-6 overflow-hidden">
+
+          {/* Header */}
+          {/* <div className="mb-4 relative">
+            <h1 className="font-serif text-xl lg:text-2xl font-bold text-hf-rose flex items-center gap-2">
+              Photobox Hanfleur
+              <Heart className="h-6 w-6 text-pink-400 fill-pink-400" />
+            </h1>
+            <p className="text-sm text-hf-text/70 mt-1">
+              Abadikan momen manismu dalam setiap senyuman.
+            </p>
+          </div> */}
+
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] xl:grid-cols-[1fr_400px] gap-8 items-start relative z-10">
+
+            {/* LEFT COLUMN: Camera & Controls */}
+            <div className="flex flex-col gap-6">
+
+              {/* Camera Viewport */}
+              <div className="relative aspect-[4/3] sm:aspect-video bg-[#f0f0f0] rounded-2xl overflow-hidden border-[6px] border-[#ffb3c6]/40 shadow-inner">
+                {/* Real Camera Feed */}
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  playsInline
+                  muted
+                  className="w-full h-full object-cover -scale-x-100"
+                />
+
+                {/* Permission Overlay */}
+                {hasPermission === false && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 text-white p-4 text-center">
+                    <Camera className="h-12 w-12 mb-3 text-white/50" />
+                    <p className="font-semibold">Akses Kamera Ditolak</p>
+                    <p className="text-sm text-white/70 mt-1">Harap izinkan akses kamera di browser Anda untuk menggunakan photobox.</p>
+                    <button onClick={startCamera} className="mt-4 px-4 py-2 bg-hf-rose rounded-full text-sm font-semibold text-white hover:bg-[#e02e5b] transition">
+                      Coba Lagi
+                    </button>
+                  </div>
+                )}
+
+                {/* Overlays (Only show when has permission) */}
+                {hasPermission && (
+                  <>
+                    {/* Top Left: Camera Toggle Button */}
+                    <button
+                      onClick={toggleCamera}
+                      className="absolute top-3 left-3 bg-white/20 backdrop-blur hover:bg-white/30 text-xs font-medium text-black px-3 py-2 rounded-full flex items-center gap-2 shadow-sm transition-all active:scale-95 z-30"
+                    >
+                      <span className={`w-2 h-2 rounded-full ${stream ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></span>
+                      {stream ? 'On' : 'Off'}
+                    </button>
+
+                    {/* Top Center: Lihat ke kamera */}
+                    <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur text-xs font-semibold text-white px-4 py-1.5 rounded-full shadow-sm">
+                      {stream ? 'Lihat ke kamera 👀' : 'Kamera dimatikan'}
+                    </div>
+
+                    {/* Top Right: Timer Selector */}
+                    <button
+                      onClick={cycleTimer}
+                      disabled={isRecording}
+                      className={`absolute top-3 right-3 bg-white/20 backdrop-blur hover:bg-white/30 text-xs font-bold text-hf-rose px-3 py-2 rounded-full flex items-center gap-1.5 shadow-sm transition-all active:scale-95 z-30 ${isRecording ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      title="Durasi timer (3 sec, 5 sec, 10 sec)"
+                    >
+                      {timerDuration} second
+                    </button>
+
+                    {/* Center Countdown Overlay */}
+                    {countdown !== null && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                        <div className="w-32 h-32 rounded-full border-4 border-white/50 flex items-center justify-center backdrop-blur-sm">
+                          <span className="text-6xl font-bold text-white drop-shadow-lg">{countdown}</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Bottom Left: Progress */}
+                    <div className="absolute bottom-3 left-3 font-bold text-white text-sm drop-shadow-md z-30 bg-black/40 backdrop-blur px-3 py-1.5 rounded-full flex items-center gap-1.5">
+                      <span>📸</span>
+                      Foto {takenPhotos.length + 1} dari {numPhotos}
+                    </div>
+
+                    {/* Bottom Center: Camera Shutter Button */}
+                    <button
+                      onClick={takePhoto}
+                      disabled={isRecording || !stream}
+                      className={`absolute bottom-4 left-1/2 -translate-x-1/2 bg-white hover:bg-hf-rose text-[#ff3a70] hover:text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg border-4 border-white transition-all active:scale-90 z-30 ${isRecording || !stream ? 'opacity-50 cursor-not-allowed scale-95' : ''}`}
+                    >
+                      <Camera className="h-6 w-6" />
+                    </button>
+                  </>
+                )}
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <button
+                  onClick={takePhoto}
+                  disabled={isRecording || !stream}
+                  className={`flex-1 min-w-[140px] py-3 px-4 bg-[#ff3a70] text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-[#e02e5b] transition-colors shadow-sm ${isRecording || !stream ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  <Camera className="h-4 w-4" />
+                  Ambil Foto
+                </button>
+                <button
+                  onClick={resetPhotos}
+                  className="flex-1 min-w-[140px] py-3 px-4 bg-white text-hf-text border border-gray-200 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors shadow-sm"
+                >
+                  <RefreshCw className="h-4 w-4" />
+                  Ulangi
+                </button>
+                <button className="flex-1 min-w-[140px] py-3 px-4 bg-white text-hf-text border border-gray-200 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors shadow-sm">
+                  <SwitchCamera className="h-4 w-4" />
+                  Ganti Kamera
+                </button>
+                <button className="flex-1 min-w-[140px] py-3 px-4 bg-[#ff3a70] text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-[#e02e5b] transition-colors shadow-sm">
+                  Lanjutkan
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+              </div>
+
+              {/* Strip Design Selection */}
+              <div className="mt-2 bg-white/40 p-4 rounded-2xl border border-white/50">
+                <h3 className="text-sm font-bold text-hf-text mb-3">Pilih Desain Strip Favoritmu</h3>
+                <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-none snap-x snap-mandatory">
+                  {photoboxDesigns.map((design) => {
+                    const isSelected = selectedDesignId === design.id;
+                    return (
+                      <div
+                        key={design.id}
+                        onClick={() => setSelectedDesignId(design.id)}
+                        className="relative shrink-0 snap-start cursor-pointer group"
+                      >
+                        <div className={`w-20 h-full rounded-xl overflow-hidden bg-white shadow-sm transition-all duration-300 border-2 ${isSelected ? 'border-[#ff3a70]' : 'border-transparent group-hover:border-hf-rose/30'}`}>
+                          <img
+                            src={`/photobox/photobox-example/${design.file}`}
+                            alt={design.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        {isSelected && (
+                          <div className="absolute -top-1.5 -right-1.5 bg-[#ff3a70] text-white rounded-full p-0.5 shadow-sm">
+                            <CheckCircle2 className="h-4 w-4" />
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+                <p className="text-xs text-hf-text/50 mt-1">Desain ini akan digunakan untuk strip fotomu.</p>
+              </div>
+
+            </div>
+
+            {/* RIGHT COLUMN: Settings & Preview */}
+            <div className="flex flex-col gap-6 lg:mt-0 lg:self-start">
+
+              {/* Jumlah Foto Settings */}
+              <div>
+                <div className="flex gap-4">
+                  <button
+                    onClick={() => setNumPhotos(3)}
+                    className={`flex-1 py-2 rounded-xl text-sm font-bold transition-all border ${numPhotos === 3 ? 'bg-[#ffeaef] text-[#ff3a70] border-[#ff3a70]' : 'bg-white text-hf-text border-gray-200 hover:border-hf-rose/30'}`}
+                  >
+                    3 Foto
+                  </button>
+                  <button
+                    onClick={() => setNumPhotos(4)}
+                    className={`flex-1 py-2 rounded-xl text-sm font-bold transition-all border ${numPhotos === 4 ? 'bg-[#ffeaef] text-[#ff3a70] border-[#ff3a70]' : 'bg-white text-hf-text border-gray-200 hover:border-hf-rose/30'}`}
+                  >
+                    4 Foto
+                  </button>
+                </div>
+              </div>
+
+              {/* Strip Preview Container */}
+              <div className="flex-1 min-h-[400px]">
+
+                {/* Strip Component */}
+                <div className="mx-auto w-[160px] lg:w-[180px] bg-white p-2 rounded-md shadow-sm border-2 border-[#ff3a70]/20 flex flex-col gap-2 relative overflow-hidden">
+
+                  {/* Decorative Background for Strip based on selection */}
+                  <div className="absolute inset-0 pointer-events-none opacity-40 mix-blend-multiply">
+                    {selectedDesignId && (
+                      <img
+                        src={`/photobox/photobox-example/${photoboxDesigns.find(d => d.id === selectedDesignId)?.file}`}
+                        alt="Strip Background"
+                        className="w-full h-full object-cover blur-sm opacity-50"
+                      />
+                    )}
+                  </div>
+
+                  {/* Slots */}
+                  <div className="flex flex-col gap-2 relative z-10">
+                    {previewSlots.map((_, i) => {
+                      const photo = takenPhotos[i];
+                      return (
+                        <div key={i} className="aspect-[4/3] bg-gray-100/80 backdrop-blur-sm rounded border border-gray-200 flex items-center justify-center shadow-inner overflow-hidden relative">
+                          {photo ? (
+                            <img src={photo} alt={`Foto ${i + 1}`} className="w-full h-full object-cover" />
+                          ) : (
+                            <Camera className="h-5 w-5 text-gray-400" />
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Footer */}
+                  <div className="mt-2 text-center relative z-10 bg-white/80 py-1 rounded backdrop-blur">
+                    <p className="font-serif text-[#ff3a70] font-bold text-sm leading-none">Hanfleur</p>
+                    <p className="font-serif text-[#ff3a70] font-bold text-sm leading-none mt-0.5">Florist</p>
+                  </div>
+                </div>
+
+                <p className="text-center text-[10px] text-hf-text/40 mt-4 px-4">
+                  Preview akan terisi otomatis setelah foto diambil.
+                </p>
+              </div>
+
+              {/* Tips Card */}
+              <div className="bg-[#fff0f4] rounded-2xl p-5 border border-hf-rose/10">
+                <h4 className="text-sm font-bold text-hf-rose flex items-center gap-2 mb-3">
+                  Tips Foto Cantik <Sparkles className="h-4 w-4 text-[#c9965b]" />
+                </h4>
+                <ul className="flex flex-col gap-3">
+                  <li className="flex items-start gap-2 text-xs text-hf-text/70">
+                    <Maximize className="h-3.5 w-3.5 text-hf-rose shrink-0 mt-0.5" />
+                    <span>Lihat ke kamera</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-xs text-hf-text/70">
+                    <Smile className="h-3.5 w-3.5 text-hf-rose shrink-0 mt-0.5" />
+                    <span>Posisi wajah di tengah</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-xs text-hf-text/70">
+                    <Sun className="h-3.5 w-3.5 text-hf-rose shrink-0 mt-0.5" />
+                    <span>Gunakan pencahayaan yang baik</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-xs text-hf-text/70">
+                    <Heart className="h-3.5 w-3.5 text-hf-rose shrink-0 mt-0.5" />
+                    <span>Tersenyum dan nikmati momenmu!</span>
+                  </li>
+                </ul>
+              </div>
+
+            </div>
+          </div>
+
+          <div className="mt-8 text-center border-t border-hf-rose/10 pt-4 relative z-10">
+            <p className="text-xs text-hf-text/50 flex items-center justify-center gap-1.5">
+              💡 Kamu bisa ganti desain kapan saja sebelum cetak.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <Footer />
+    </main>
+  )
+}

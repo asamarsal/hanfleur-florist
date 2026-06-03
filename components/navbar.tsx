@@ -6,12 +6,13 @@ import { Menu, X, Volume2, VolumeX } from 'lucide-react'
 import { links } from '@/data/links'
 
 const navItems = [
-  { label: 'Beranda', href: '#' },
-  { label: 'Katalog', href: '#katalog' },
-  { label: 'Custom Bouquet', href: '#custom-bouquet' },
-  { label: 'Testimoni', href: '#testimonials' },
-  { label: 'Tentang Kami', href: '#about' },
-  { label: 'FAQ', href: '#faq' },
+  { label: 'Beranda', href: '/' },
+  { label: 'Katalog', href: '/#katalog' },
+  { label: 'Custom Bouquet', href: '/#custom-bouquet' },
+  { label: 'Photobox', href: '/photobox' },
+  { label: 'Testimoni', href: '/#testimonials' },
+  { label: 'Tentang Kami', href: '/#about' },
+  { label: 'FAQ', href: '/#faq' },
 ]
 
 export function Navbar() {
@@ -19,6 +20,14 @@ export function Navbar() {
   const [isPlaying, setIsPlaying] = useState(false)
   const [activeItem, setActiveItem] = useState('Beranda')
   const audioRef = useRef<HTMLAudioElement | null>(null)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if (window.location.pathname === '/photobox') {
+        setActiveItem('Photobox')
+      }
+    }
+  }, [])
 
   useEffect(() => {
     const audio = audioRef.current
@@ -129,23 +138,27 @@ export function Navbar() {
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string, label: string) => {
     setActiveItem(label)
     setIsOpen(false)
-    if (href.startsWith('#') && href.length > 1) {
-      e.preventDefault()
-      const element = document.querySelector(href)
-      if (element) {
-        const elementPosition = element.getBoundingClientRect().top + window.scrollY
-        const navbarOffset = 82 // 76px navbar height + offset
+    if (href.startsWith('/#') && href.length > 2) {
+      if (window.location.pathname === '/') {
+        e.preventDefault()
+        const element = document.querySelector(href.substring(1))
+        if (element) {
+          const elementPosition = element.getBoundingClientRect().top + window.scrollY
+          const navbarOffset = 82 // 76px navbar height + offset
+          window.scrollTo({
+            top: elementPosition - navbarOffset,
+            behavior: 'smooth'
+          })
+        }
+      }
+    } else if (href === '/') {
+      if (window.location.pathname === '/') {
+        e.preventDefault()
         window.scrollTo({
-          top: elementPosition - navbarOffset,
+          top: 0,
           behavior: 'smooth'
         })
       }
-    } else if (href === '#') {
-      e.preventDefault()
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      })
     }
   }
 
@@ -165,7 +178,7 @@ export function Navbar() {
         {/* Desktop Navbar */}
         <div className="hidden lg:flex w-full items-center justify-between py-3 px-12">
           {/* Logo */}
-          <a href="#" onClick={(e) => handleNavClick(e, '#', 'Beranda')} className="flex items-center">
+          <a href="/" onClick={(e) => handleNavClick(e, '/', 'Beranda')} className="flex items-center">
             <Image
               src="/images/hanfleur-logo-startallign-transparent.png"
               alt="Logo Hanfleur Florist"
@@ -227,7 +240,7 @@ export function Navbar() {
         {/* Mobile Navbar */}
         <div className="flex lg:hidden w-full items-center justify-between py-2 px-4 sm:px-6">
           {/* Logo */}
-          <a href="#" onClick={(e) => handleNavClick(e, '#', 'Beranda')} className="flex flex-col text-left">
+          <a href="/" onClick={(e) => handleNavClick(e, '/', 'Beranda')} className="flex flex-col text-left">
             <Image
               src="/images/hanfleur-logo-startallign-transparent.png"
               alt="Logo Hanfleur Florist"

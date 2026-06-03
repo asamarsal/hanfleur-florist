@@ -201,7 +201,7 @@ export function PhotoboxSection() {
                     className="hidden sm:inline-block h-5 w-5 object-contain"
                   />
                 </h3>
-                <p className="text-xs text-hf-text/60 mt-0.5">Berbagai tema manis untuk setiap momen berharga.</p>
+                <p className="text-xs text-hf-text/60 mt-0.5">Berbagai tema untuk setiap momen berharga.</p>
               </div>
               <Link
                 href="/photobox"
@@ -262,11 +262,10 @@ export function PhotoboxSection() {
                   <button
                     key={index}
                     onClick={() => scrollToActiveIndex(index)}
-                    className={`h-2.5 transition-all duration-300 rounded-full ${
-                      activeIndex === index
-                        ? 'w-7 bg-[#ff3a70] border border-white shadow-sm ring-1 ring-[#ff3a70]/30'
-                        : 'w-2.5 bg-[#ff3a70]/30 hover:bg-[#ff3a70]/50'
-                    }`}
+                    className={`h-2.5 transition-all duration-300 rounded-full ${activeIndex === index
+                      ? 'w-7 bg-[#ff3a70] border border-white shadow-sm ring-1 ring-[#ff3a70]/30'
+                      : 'w-2.5 bg-[#ff3a70]/30 hover:bg-[#ff3a70]/50'
+                      }`}
                     aria-label={`Go to slide ${index + 1}`}
                   />
                 ))}
