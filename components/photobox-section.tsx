@@ -1,22 +1,21 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Camera, ChevronRight, ChevronLeft, Printer, Sparkles, Gift, Heart } from 'lucide-react'
 
 const photoboxDesigns = [
   { id: 1, file: 'example1-pb.png', name: 'Romantic Love' },
-  { id: 2, file: 'example2-pb.png', name: 'Sweet Couple' },
-  { id: 3, file: 'example3-pb.png', name: 'Best Friends' },
-  { id: 4, file: 'example4-pb.png', name: 'Blush Flowers' },
-  { id: 5, file: 'example5-pb.png', name: 'Pink Dream' },
-  { id: 6, file: 'example6-pb.png', name: 'Golden Love' },
-  { id: 7, file: 'example7-pb.png', name: 'Floral Magic' },
-  { id: 8, file: 'example8-pb.png', name: 'Cute Pastel' },
-  { id: 9, file: 'example9-pb.png', name: 'Spring Garden' },
-  { id: 10, file: 'example10-pb.png', name: 'Rose Romance' },
-  { id: 11, file: 'example11-pb.png', name: 'Happy Moments' },
+  { id: 2, file: 'example3-pb.png', name: 'Best Friends' },
+  { id: 3, file: 'example4-pb.png', name: 'Blush Flowers' },
+  { id: 4, file: 'example5-pb.png', name: 'Pink Dream' },
+  { id: 5, file: 'example6-pb.png', name: 'Golden Love' },
+  { id: 6, file: 'example7-pb.png', name: 'Floral Magic' },
+  { id: 7, file: 'example8-pb.png', name: 'Cute Pastel' },
+  { id: 8, file: 'example9-pb.png', name: 'Spring Garden' },
+  { id: 9, file: 'example10-pb.png', name: 'Rose Romance' },
+  { id: 10, file: 'example11-pb.png', name: 'Happy Moments' },
 ]
 
 const features = [
@@ -39,6 +38,47 @@ const features = [
 
 export function PhotoboxSection() {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const [activeIndex, setActiveIndex] = useState(0)
+
+  useEffect(() => {
+    const container = scrollContainerRef.current
+    if (!container) return
+
+    const handleScroll = () => {
+      const maxScrollLeft = container.scrollWidth - container.clientWidth
+      if (maxScrollLeft > 0) {
+        const progress = container.scrollLeft / maxScrollLeft
+        const index = Math.round(progress * (photoboxDesigns.length - 1))
+        setActiveIndex(index)
+      } else {
+        setActiveIndex(0)
+      }
+    }
+
+    container.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll()
+
+    window.addEventListener('resize', handleScroll)
+
+    return () => {
+      container.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('resize', handleScroll)
+    }
+  }, [])
+
+  const scrollToActiveIndex = (index: number) => {
+    const container = scrollContainerRef.current
+    if (container) {
+      const maxScrollLeft = container.scrollWidth - container.clientWidth
+      if (maxScrollLeft > 0) {
+        const targetScrollLeft = (index / (photoboxDesigns.length - 1)) * maxScrollLeft
+        container.scrollTo({
+          left: targetScrollLeft,
+          behavior: 'smooth',
+        })
+      }
+    }
+  }
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollContainerRef.current) {
@@ -215,6 +255,22 @@ export function PhotoboxSection() {
               >
                 <ChevronRight className="h-6 w-6 sm:h-8 sm:w-8" />
               </button>
+
+              {/* Pagination Dots */}
+              <div className="flex justify-center items-center gap-2 mt-4 relative z-30">
+                {photoboxDesigns.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => scrollToActiveIndex(index)}
+                    className={`h-2.5 transition-all duration-300 rounded-full ${
+                      activeIndex === index
+                        ? 'w-7 bg-[#ff3a70] border border-white shadow-sm ring-1 ring-[#ff3a70]/30'
+                        : 'w-2.5 bg-[#ff3a70]/30 hover:bg-[#ff3a70]/50'
+                    }`}
+                    aria-label={`Go to slide ${index + 1}`}
+                  />
+                ))}
+              </div>
             </div>
           </div>
 
