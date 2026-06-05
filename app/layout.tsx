@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Fraunces, Nunito } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import { GlobalPreloader } from '@/components/global-preloader'
 import './globals.css'
 
 const fraunces = Fraunces({
@@ -47,6 +48,7 @@ export default function RootLayout({
       <body
         className={`${fraunces.variable} ${nunito.variable} font-sans antialiased`}
       >
+        <GlobalPreloader />
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
