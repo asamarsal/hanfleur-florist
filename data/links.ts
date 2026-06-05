@@ -1,6 +1,6 @@
 export const links = {
   whatsapp: 'https://api.whatsapp.com/send/?phone=628152008873&text=Halo.%0ASaya+ingin+memesan+bunga+custom',
-  catalog: '#',
+  catalog: '/catalogue/KATALOG-HANFLEUR-FLORIST-JUNI.pdf',
   instagram: 'https://instagram.com/hanfleurflorist.bekasi',
   tiktok: 'https://tiktok.com/@hanfleurflorist.bekasi',
   email: 'mailto:hanfleurflorist@gmail.com',
@@ -18,7 +18,7 @@ export type SocialLink = {
 export const socialLinks: SocialLink[] = [
   {
     label: 'Lihat Katalog Bouquet',
-    href: links.catalog,
+    href: '/catalogue/KATALOG-HANFLEUR-FLORIST-JUNI.pdf',
     icon: '/icon/icon-catalogue.png',
     ariaLabel: 'Lihat katalog bouquet Hanfleur Florist',
   },
