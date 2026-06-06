@@ -1,8 +1,7 @@
 'use client'
 
 import { useRef, useState, useEffect } from 'react'
-import Image from 'next/image'
-import { Camera, RefreshCw, SwitchCamera, ArrowRight, CheckCircle2, Check, Sparkles, Smile, Maximize, Minimize, Sun, Heart } from 'lucide-react'
+import { Camera, RefreshCw, SwitchCamera, ArrowRight, Check, Sparkles, SmilePlus, Smile, Maximize, Minimize, Sun, Heart, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 import { DecorativeBackground } from '@/components/decorative-background'
@@ -23,6 +22,10 @@ const photoboxDesigns = [
 export default function PhotoboxPage() {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [stream, setStream] = useState<MediaStream | null>(null)
+  const streamRef = useRef<MediaStream | null>(null)
+  const [facingMode, setFacingMode] = useState<'Front' | 'Back'>('Front')
+  const [activeEffect, setActiveEffect] = useState<'normal' | 'vintage' | 'bnw' | 'teal_orange'>('normal')
+  const [showEffectsPanel, setShowEffectsPanel] = useState(false)
   const [hasPermission, setHasPermission] = useState<boolean | null>(null)
 
   const [numPhotos, setNumPhotos] = useState<3 | 4>(4)
@@ -55,11 +58,33 @@ export default function PhotoboxPage() {
   }
 
   // Start Camera
-  const startCamera = async () => {
+  const startCamera = async (mode: 'Front' | 'Back' = 'Front') => {
     try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop())
+      }
+      const constraintMode = mode === 'Front' ? 'user' : 'environment'
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: constraintMode },
+        audio: false
+      })
       setStream(mediaStream)
+      streamRef.current = mediaStream
       setHasPermission(true)
+
+      // Auto-detect actual facing mode from track settings if possible
+      const tracks = mediaStream.getVideoTracks()
+      if (tracks.length > 0) {
+        const settings = tracks[0].getSettings()
+        if (settings.facingMode) {
+          setFacingMode(settings.facingMode === 'environment' ? 'Back' : 'Front')
+        } else {
+          setFacingMode(mode)
+        }
+      } else {
+        setFacingMode(mode)
+      }
+
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream
       }
@@ -74,12 +99,36 @@ export default function PhotoboxPage() {
     if (stream) {
       stream.getTracks().forEach(track => track.stop())
       setStream(null)
+      streamRef.current = null
       if (videoRef.current) {
         videoRef.current.srcObject = null
       }
     } else {
-      await startCamera()
+      await startCamera(facingMode)
     }
+  }
+
+  // Switch between front and back camera
+  const switchCamera = async () => {
+    const nextMode = facingMode === 'Front' ? 'Back' : 'Front'
+    await startCamera(nextMode)
+  }
+
+  // List of camera effects
+  const effectsList: ('normal' | 'vintage' | 'bnw' | 'teal_orange')[] = ['normal', 'vintage', 'bnw', 'teal_orange']
+
+  // Switch to previous effect
+  const prevEffect = () => {
+    const currentIndex = effectsList.indexOf(activeEffect)
+    const nextIndex = (currentIndex - 1 + effectsList.length) % effectsList.length
+    setActiveEffect(effectsList[nextIndex])
+  }
+
+  // Switch to next effect
+  const nextEffect = () => {
+    const currentIndex = effectsList.indexOf(activeEffect)
+    const nextIndex = (currentIndex + 1) % effectsList.length
+    setActiveEffect(effectsList[nextIndex])
   }
 
   // Cycle Timer
@@ -134,6 +183,17 @@ export default function PhotoboxPage() {
           ctx.translate(canvas.width, 0)
           ctx.scale(-1, 1)
 
+          // Apply filter to canvas before drawing
+          if (activeEffect === 'vintage') {
+            ctx.filter = 'sepia(0.4) contrast(1.1) brightness(0.95) saturate(1.2)'
+          } else if (activeEffect === 'bnw') {
+            ctx.filter = 'grayscale(1) contrast(1.2)'
+          } else if (activeEffect === 'teal_orange') {
+            ctx.filter = 'saturate(1.3) contrast(1.1) sepia(0.1) hue-rotate(-15deg)'
+          } else {
+            ctx.filter = 'none'
+          }
+
           ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
           const dataUrl = canvas.toDataURL('image/png')
 
@@ -146,13 +206,13 @@ export default function PhotoboxPage() {
         }
       }
     }
-  }, [countdown, timerDuration, numPhotos, stream])
+  }, [countdown, timerDuration, numPhotos, stream, activeEffect])
 
   useEffect(() => {
-    startCamera()
+    startCamera('Front')
     return () => {
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop())
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop())
       }
     }
   }, [])
@@ -194,6 +254,15 @@ export default function PhotoboxPage() {
                     autoPlay
                     playsInline
                     muted
+                    style={{
+                      filter: activeEffect === 'vintage'
+                        ? 'sepia(0.4) contrast(1.1) brightness(0.95) saturate(1.2)'
+                        : activeEffect === 'bnw'
+                          ? 'grayscale(1) contrast(1.2)'
+                          : activeEffect === 'teal_orange'
+                            ? 'saturate(1.3) contrast(1.1) sepia(0.1) hue-rotate(-15deg)'
+                            : 'none'
+                    }}
                     className="w-full h-full object-cover -scale-x-100"
                   />
 
@@ -203,7 +272,7 @@ export default function PhotoboxPage() {
                       <Camera className="h-12 w-12 mb-3 text-white/50" />
                       <p className="font-semibold">Akses Kamera Ditolak</p>
                       <p className="text-sm text-white/70 mt-1">Harap izinkan akses kamera di browser Anda untuk menggunakan photobox.</p>
-                      <button onClick={startCamera} className="mt-4 px-4 py-2 bg-hf-rose rounded-full text-sm font-semibold text-white hover:bg-[#e02e5b] transition">
+                      <button onClick={() => startCamera()} className="mt-4 px-4 py-2 bg-hf-rose rounded-full text-sm font-semibold text-white hover:bg-[#e02e5b] transition">
                         Coba Lagi
                       </button>
                     </div>
@@ -223,7 +292,7 @@ export default function PhotoboxPage() {
 
                       {/* Top Center: Lihat ke kamera */}
                       <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur text-xs font-semibold text-white px-4 py-1.5 rounded-full shadow-sm">
-                        {stream ? 'Lihat ke kamera 💖' : 'Kamera dimatikan'}
+                        {stream ? 'Senyum 💖' : 'Camera Off'}
                       </div>
 
                       {/* Top Right: Timer Selector */}
@@ -233,7 +302,7 @@ export default function PhotoboxPage() {
                         className={`absolute top-3 right-3 bg-white/20 backdrop-blur hover:bg-white/30 text-xs font-bold text-hf-rose px-3 py-2 rounded-full flex items-center gap-1.5 shadow-sm transition-all active:scale-95 z-30 ${isRecording ? 'opacity-50 cursor-not-allowed' : ''}`}
                         title="Durasi timer (3 sec, 5 sec, 10 sec)"
                       >
-                        {timerDuration} second
+                        {timerDuration} detik
                       </button>
 
                       {/* Center Countdown Overlay */}
@@ -247,7 +316,6 @@ export default function PhotoboxPage() {
 
                       {/* Bottom Left: Progress */}
                       <div className="absolute bottom-3 left-3 font-bold text-white text-sm drop-shadow-md z-30 bg-black/40 backdrop-blur px-3 py-1.5 rounded-full flex items-center gap-1.5">
-                        <span>📸</span>
                         {takenPhotos.length >= numPhotos
                           ? `Selesai! (${numPhotos} Foto)`
                           : `${takenPhotos.length + 1} dari ${numPhotos}`}
@@ -279,7 +347,7 @@ export default function PhotoboxPage() {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex flex-wrap items-center justify-center gap-3">
+                <div className="flex flex-wrap items-center justify-center gap-3 w-full">
                   <button
                     onClick={takePhoto}
                     disabled={isRecording || !stream}
@@ -288,17 +356,67 @@ export default function PhotoboxPage() {
                     <Camera className="h-4 w-4" />
                     Ambil Foto
                   </button>
-                  <button
-                    onClick={resetPhotos}
-                    className="flex-1 min-w-[140px] py-3 px-4 bg-white text-hf-text border border-gray-200 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors shadow-sm"
-                  >
-                    <RefreshCw className="h-4 w-4" />
-                    Ulangi
-                  </button>
-                  <button className="flex-1 min-w-[140px] py-3 px-4 bg-white text-hf-text border border-gray-200 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors shadow-sm">
-                    <SwitchCamera className="h-4 w-4" />
-                    Ganti Kamera
-                  </button>
+                  <div className="flex-1 min-w-[280px] sm:min-w-[360px] flex gap-2 sm:gap-3">
+                    <button
+                      onClick={resetPhotos}
+                      className="flex-1 py-3 px-2 sm:px-4 bg-white text-hf-text border border-gray-200 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 hover:bg-gray-50 transition-colors shadow-sm"
+                    >
+                      <RefreshCw className="h-4 w-4" />
+                      Ulangi
+                    </button>
+                    <div className="flex-1 relative flex">
+                      {showEffectsPanel && (
+                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 bg-white/95 backdrop-blur-sm border border-pink-100 rounded-2xl shadow-xl px-2 py-1.5 flex items-center justify-between gap-2 min-w-[160px] z-50 animate-in fade-in slide-in-from-bottom-2 duration-150">
+                          {/* Triangle tip on the bottom */}
+                          <div className="absolute top-full left-1/2 -translate-x-1/2 border-[6px] border-transparent border-t-white/95 filter drop-shadow-[0_1px_0_rgba(244,114,182,0.1)]"></div>
+
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              prevEffect()
+                            }}
+                            className="p-1 hover:bg-hf-rose/10 text-hf-text hover:text-[#ff3a70] rounded-lg transition-colors"
+                          >
+                            <ChevronLeft className="h-4 w-4" />
+                          </button>
+
+                          <span className="text-[10px] sm:text-xs font-bold text-hf-text tracking-wide select-none">
+                            {activeEffect === 'normal' && 'Normal'}
+                            {activeEffect === 'vintage' && 'Vintage'}
+                            {activeEffect === 'bnw' && 'B&W'}
+                            {activeEffect === 'teal_orange' && 'Teal & Orange'}
+                          </span>
+
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              nextEffect()
+                            }}
+                            className="p-1 hover:bg-hf-rose/10 text-hf-text hover:text-[#ff3a70] rounded-lg transition-colors"
+                          >
+                            <ChevronRight className="h-4 w-4" />
+                          </button>
+                        </div>
+                      )}
+                      <button
+                        onClick={() => setShowEffectsPanel(prev => !prev)}
+                        className={`w-full py-3 px-2 sm:px-4 border rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 transition-all shadow-sm ${showEffectsPanel
+                            ? 'bg-hf-rose/10 text-[#ff3a70] border-pink-300'
+                            : 'bg-white text-hf-text border-gray-200 hover:bg-gray-50'
+                          }`}
+                      >
+                        <SmilePlus className="h-4 w-4" />
+                        Efek
+                      </button>
+                    </div>
+                    <button
+                      onClick={switchCamera}
+                      className="flex-1 py-3 px-2 sm:px-4 bg-white text-hf-text border border-gray-200 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 hover:bg-gray-50 transition-colors shadow-sm"
+                    >
+                      <SwitchCamera className="h-4 w-4" />
+                      {facingMode}
+                    </button>
+                  </div>
                   <button className="flex-1 min-w-[140px] py-3 px-4 bg-[#ff3a70] text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-[#e02e5b] transition-colors shadow-sm">
                     Lanjutkan
                     <ArrowRight className="h-4 w-4" />
