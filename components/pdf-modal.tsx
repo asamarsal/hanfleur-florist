@@ -62,6 +62,44 @@ export function PdfModal({
   const zoomIn = () => setScale((prev) => Math.min(prev + 0.1, 3.0))
   const zoomOut = () => setScale((prev) => Math.max(prev - 0.1, 0.4))
 
+  // Touch handlers for swipe navigation on mobile
+  const touchStartX = useRef<number | null>(null)
+  const touchEndX = useRef<number | null>(null)
+  const touchStartY = useRef<number | null>(null)
+  const touchEndY = useRef<number | null>(null)
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.targetTouches[0].clientX
+    touchStartY.current = e.targetTouches[0].clientY
+    touchEndX.current = e.targetTouches[0].clientX
+    touchEndY.current = e.targetTouches[0].clientY
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.targetTouches[0].clientX
+    touchEndY.current = e.targetTouches[0].clientY
+  }
+
+  const handleTouchEnd = () => {
+    if (!touchStartX.current || !touchEndX.current || !touchStartY.current || !touchEndY.current) return
+    if (scale > 1.0) return // Allow user to pan left/right freely when zoomed in
+
+    const distanceX = touchStartX.current - touchEndX.current
+    const distanceY = touchStartY.current - touchEndY.current
+
+    // Ignore if vertical swipe distance is larger than horizontal swipe distance (it's a scroll)
+    if (Math.abs(distanceY) > Math.abs(distanceX)) return
+
+    const isLeftSwipe = distanceX > 50
+    const isRightSwipe = distanceX < -50
+
+    if (isLeftSwipe && numPages && pageNumber < numPages) {
+      setPageNumber((prev) => prev + 1)
+    } else if (isRightSwipe && pageNumber > 1) {
+      setPageNumber((prev) => prev - 1)
+    }
+  }
+
   // Calculate dynamic scale to fit the page width completely in the container
   let finalScale = scale
   if (containerWidth && pageDimensions) {
@@ -77,7 +115,7 @@ export function PdfModal({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent
-        className="flex max-h-[90vh] sm:max-h-[90vh] h-[90vh] sm:h-[90vh] w-full flex-col overflow-hidden p-0 bg-[#fcf8f9] gap-0 border-none shadow-xl [&>button]:hidden !bottom-0 !top-auto !translate-y-0 !rounded-b-none !rounded-t-[32px] !max-w-full sm:!max-w-[800px] sm:!bottom-auto sm:!top-[50%] sm:!-translate-y-1/2 sm:!rounded-[32px]"
+        className="flex max-h-[90vh] sm:max-h-[95vh] h-[90vh] sm:h-[95vh] w-full flex-col overflow-hidden p-0 bg-[#fcf8f9] gap-0 border-none shadow-xl [&>button]:hidden !bottom-0 !top-auto !translate-y-0 !rounded-b-none !rounded-t-[32px] !max-w-full sm:!max-w-[800px] sm:!bottom-auto sm:!top-[50%] sm:!-translate-y-1/2 sm:!rounded-[32px]"
         aria-describedby={undefined}
       >
         <DialogTitle className="sr-only">Katalog PDF</DialogTitle>
@@ -114,6 +152,9 @@ export function PdfModal({
           ref={containerRef}
           className="flex-1 overflow-auto bg-[#f4f0f1] p-4 relative flex justify-center items-start"
           id="pdf-container"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         >
           <Document
             file={file}
@@ -141,7 +182,7 @@ export function PdfModal({
           <button
             disabled={pageNumber <= 1}
             onClick={() => setPageNumber(prev => prev - 1)}
-            className="flex items-center gap-2 rounded-xl border border-hf-border bg-white px-4 py-2 text-sm font-medium text-hf-text hover:bg-hf-cream disabled:opacity-50 transition-all"
+            className="flex items-center gap-2 rounded-xl bg-[#ff3a70] px-4 py-2 text-sm font-bold text-white hover:bg-[#cf4067] disabled:opacity-50 transition-all"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4"><path d="m15 18-6-6 6-6" /></svg>
             <span className="hidden sm:inline">Sebelumnya</span>
