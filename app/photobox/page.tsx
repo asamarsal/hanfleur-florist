@@ -1,11 +1,12 @@
 'use client'
 
 import { useRef, useState, useEffect } from 'react'
-import { Camera, RefreshCw, SwitchCamera, ArrowRight, Check, Sparkles, SmilePlus, Smile, Maximize, Minimize, Sun, Heart, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Camera, RefreshCw, SwitchCamera, ArrowRight, Check, Sparkles, SmilePlus, Smile, Maximize, Minimize, Sun, Heart, ChevronLeft, ChevronRight, X, CheckCircle2, Edit2, LayoutGrid, Lock } from 'lucide-react'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 import { DecorativeBackground } from '@/components/decorative-background'
 import { toast } from 'sonner'
+import { PhotoboxStep1Dialog } from '@/components/dialog/photobox/step-1'
 
 const photoboxDesigns = [
   { id: 1, file: 'example1-pb.png', name: 'Romantic Love' },
@@ -32,6 +33,7 @@ export default function PhotoboxPage() {
   const [numPhotos, setNumPhotos] = useState<3 | 4>(4)
   const [selectedDesignId, setSelectedDesignId] = useState(1)
   const [takenPhotos, setTakenPhotos] = useState<string[]>([])
+  const [showPreviewModal, setShowPreviewModal] = useState(false)
 
   const [isRecording, setIsRecording] = useState(false)
   const [countdown, setCountdown] = useState<number | null>(null)
@@ -424,7 +426,7 @@ export default function PhotoboxPage() {
                         toast.error(`Selesaikan pengambilan ${numPhotos} foto terlebih dahulu!`);
                         return;
                       }
-                      // Lanjutkan logic here
+                      setShowPreviewModal(true);
                     }}
                     className={`flex-1 min-w-[140px] py-3 px-4 bg-[#ff3a70] text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors shadow-sm hover:bg-[#e02e5b] ${takenPhotos.length < numPhotos ? 'cursor-not-allowed' : ''}`}
                   >
@@ -578,6 +580,16 @@ export default function PhotoboxPage() {
 
         <Footer />
       </div>
+
+      <PhotoboxStep1Dialog 
+        isOpen={showPreviewModal}
+        onOpenChange={setShowPreviewModal}
+        selectedDesignId={selectedDesignId}
+        photoboxDesigns={photoboxDesigns}
+        takenPhotos={takenPhotos}
+        numPhotos={numPhotos}
+        resetPhotos={resetPhotos}
+      />
     </main>
   )
 }
