@@ -34,7 +34,7 @@ export default function PhotoboxPage() {
 
   const [isRecording, setIsRecording] = useState(false)
   const [countdown, setCountdown] = useState<number | null>(null)
-  const [timerDuration, setTimerDuration] = useState<3 | 5 | 10>(10)
+  const [timerDuration, setTimerDuration] = useState<3 | 5 | 10>(3)
   const [isFullscreen, setIsFullscreen] = useState(false)
 
   useEffect(() => {
@@ -401,8 +401,8 @@ export default function PhotoboxPage() {
                       <button
                         onClick={() => setShowEffectsPanel(prev => !prev)}
                         className={`w-full py-3 px-2 sm:px-4 border rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 sm:gap-2 transition-all shadow-sm ${showEffectsPanel
-                            ? 'bg-hf-rose/10 text-[#ff3a70] border-pink-300'
-                            : 'bg-white text-hf-text border-gray-200 hover:bg-gray-50'
+                          ? 'bg-hf-rose/10 text-[#ff3a70] border-pink-300'
+                          : 'bg-white text-hf-text border-gray-200 hover:bg-gray-50'
                           }`}
                       >
                         <SmilePlus className="h-4 w-4" />
