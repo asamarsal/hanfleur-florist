@@ -5,6 +5,7 @@ import { Camera, RefreshCw, SwitchCamera, ArrowRight, Check, Sparkles, SmilePlus
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 import { DecorativeBackground } from '@/components/decorative-background'
+import { toast } from 'sonner'
 
 const photoboxDesigns = [
   { id: 1, file: 'example1-pb.png', name: 'Romantic Love' },
@@ -417,7 +418,16 @@ export default function PhotoboxPage() {
                       {facingMode}
                     </button>
                   </div>
-                  <button className="flex-1 min-w-[140px] py-3 px-4 bg-[#ff3a70] text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-[#e02e5b] transition-colors shadow-sm">
+                  <button
+                    onClick={() => {
+                      if (takenPhotos.length < numPhotos) {
+                        toast.error(`Selesaikan pengambilan ${numPhotos} foto terlebih dahulu!`);
+                        return;
+                      }
+                      // Lanjutkan logic here
+                    }}
+                    className={`flex-1 min-w-[140px] py-3 px-4 bg-[#ff3a70] text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors shadow-sm hover:bg-[#e02e5b] ${takenPhotos.length < numPhotos ? 'cursor-not-allowed' : ''}`}
+                  >
                     Lanjutkan
                     <ArrowRight className="h-4 w-4" />
                   </button>
@@ -515,7 +525,7 @@ export default function PhotoboxPage() {
                             {photo ? (
                               <img src={photo} alt={`Foto ${i + 1}`} className="w-full h-full object-cover" />
                             ) : (
-                              <Camera className="h-5 w-5 text-gray-400" />
+                              <span className="text-xl font-bold text-gray-400">{i + 1}</span>
                             )}
                           </div>
                         );
