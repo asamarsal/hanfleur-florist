@@ -1,4 +1,6 @@
-import { X, Heart, Crown, QrCode, Wallet, Landmark, Check, ImageIcon, CheckCircle2, Printer, Download, Mail, RefreshCcw, Lock } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { X, Heart, Crown, QrCode as QrCodeIcon, Wallet, Landmark, Check, ImageIcon, CheckCircle2, Printer, Download, Mail, RefreshCcw, Lock } from 'lucide-react'
+import QRCode from 'react-qr-code'
 import { PhotoboxStepper } from './stepper'
 
 interface PhotoboxStep3DialogProps {
@@ -18,6 +20,22 @@ export function PhotoboxStep3Dialog({
     takenPhotos,
     onBack,
 }: PhotoboxStep3DialogProps) {
+    // 14 minutes and 53 seconds = 893 seconds
+    const [timeLeft, setTimeLeft] = useState(893);
+
+    useEffect(() => {
+        if (!isOpen) return;
+        
+        const timer = setInterval(() => {
+            setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
+        }, 1000);
+        
+        return () => clearInterval(timer);
+    }, [isOpen]);
+
+    const minutes = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+    const seconds = String(timeLeft % 60).padStart(2, '0');
+
     if (!isOpen) return null;
 
     const design = photoboxDesigns.find(d => d.id === selectedDesignId);
@@ -106,18 +124,18 @@ export function PhotoboxStep3Dialog({
                             {/* QR & Timer */}
                             <div className="flex flex-col xl:flex-row gap-4">
                                 <div className="w-full xl:w-[140px] shrink-0 border border-pink-100 rounded-xl p-3 bg-white flex flex-col items-center justify-center shadow-sm">
-                                    <QrCode className="w-[120px] h-[120px] text-gray-800" strokeWidth={1} />
+                                    <QRCode value="https://hanfleur.com/pay" size={120} style={{ height: "auto", maxWidth: "100%", width: "100%" }} />
                                 </div>
                                 <div className="flex-1 bg-pink-50 rounded-xl border border-pink-100 p-4 flex flex-col items-center justify-center text-center">
                                     <p className="text-xs text-gray-500 font-medium mb-1">Sisa Waktu Pembayaran</p>
                                     <div className="flex items-center justify-center gap-2 font-bold text-3xl text-[#ff3a70] my-2">
                                         <div className="flex flex-col items-center">
-                                            <span>14</span>
+                                            <span suppressHydrationWarning>{minutes}</span>
                                             <span className="text-[10px] text-gray-500 font-normal mt-[-4px]">menit</span>
                                         </div>
                                         <span className="mb-4">:</span>
                                         <div className="flex flex-col items-center">
-                                            <span>53</span>
+                                            <span suppressHydrationWarning>{seconds}</span>
                                             <span className="text-[10px] text-gray-500 font-normal mt-[-4px]">detik</span>
                                         </div>
                                     </div>
@@ -172,7 +190,7 @@ export function PhotoboxStep3Dialog({
                                         <div className="absolute top-1.5 right-1.5 bg-[#ff3a70] rounded-full p-0.5">
                                             <Check className="w-2.5 h-2.5 text-white" />
                                         </div>
-                                        <QrCode className="w-6 h-6 mb-1 text-[#ff3a70]" />
+                                        <QrCodeIcon className="w-6 h-6 mb-1 text-[#ff3a70]" />
                                         <span className="font-bold text-[11px] sm:text-xs">QRIS</span>
                                     </div>
                                     <div className="border border-gray-200 bg-white hover:border-pink-300 rounded-xl p-2 relative flex flex-col items-center justify-center cursor-pointer min-h-[70px] transition-colors">
