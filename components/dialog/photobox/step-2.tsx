@@ -98,14 +98,14 @@ export function PhotoboxStep2Dialog({
                 />
 
                 {/* Main Content Area */}
-                <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-center lg:items-stretch relative z-10">
+                <div className="flex-1 flex flex-col lg:flex-row gap-6 lg:gap-8 items-stretch relative z-10 min-h-0">
 
                     {/* Left Column - Strip Preview */}
-                    <div className="shrink-0 relative hidden md:flex items-center justify-center pt-2">
+                    <div className="shrink-0 relative hidden md:flex items-start justify-center pt-0">
                         <Heart className="absolute -left-4 top-1/4 h-5 w-5 text-pink-400 fill-pink-400 opacity-70 -rotate-12 drop-shadow-sm" />
                         <Heart className="absolute -left-6 top-1/2 h-4 w-4 text-pink-300 fill-pink-300 opacity-60 rotate-12 drop-shadow-sm" />
 
-                        <div className="w-[160px] bg-white p-2.5 rounded-xl shadow-xl border-4 border-white flex flex-col gap-2 relative overflow-hidden">
+                        <div className="w-[160px] sm:w-[180px] bg-white p-2 sm:p-2.5 rounded-xl shadow-xl border-4 border-white flex flex-col gap-2 relative overflow-hidden">
                             <div className="absolute inset-0 pointer-events-none opacity-40 mix-blend-multiply">
                                 {selectedDesignId && photoboxDesigns.find(d => d.id === selectedDesignId)?.file && (
                                     <img
@@ -136,7 +136,7 @@ export function PhotoboxStep2Dialog({
                     </div>
 
                     {/* Middle Column - Canvas */}
-                    <div className="flex-1 flex flex-col items-center justify-start w-full max-w-[500px] lg:max-w-none pt-2 lg:pt-0">
+                    <div className="flex-1 flex flex-col items-center justify-between w-full max-w-[500px] lg:max-w-none pt-2 lg:pt-0">
                         <div className="w-full aspect-[4/3] bg-gray-100 rounded-[1.5rem] overflow-hidden border-4 border-white shadow-xl relative group">
                             <img src={takenPhotos[currentPhotoIdx] || '/placeholder.jpg'} className="w-full h-full object-cover" alt="Active Photo" />
 
@@ -171,7 +171,7 @@ export function PhotoboxStep2Dialog({
                         )}
 
                         {/* Action Buttons Moved Under Canvas */}
-                        <div className="mt-6 w-full flex flex-col gap-2.5">
+                        <div className="w-full flex flex-col gap-2.5 mt-auto pt-6 shrink-0">
                             <div className="flex w-full gap-2 sm:gap-2.5">
                                 <button
                                     onClick={() => {
@@ -200,7 +200,7 @@ export function PhotoboxStep2Dialog({
                     </div>
 
                     {/* Right Column - Tools panel */}
-                    <div className={`w-full lg:w-[400px] bg-white rounded-3xl p-5 shadow-sm border border-pink-100 flex flex-col ${isFullscreen ? '' : 'max-h-[550px]'}`}>
+                    <div className={`w-full lg:w-[400px] bg-white rounded-3xl p-5 shadow-sm border border-pink-100 flex flex-col ${isFullscreen ? '' : 'h-full lg:h-auto'}`}>
                         {/* Tabs */}
                         <div className="flex gap-1 border-b border-pink-100 pb-2 mb-4 shrink-0 overflow-x-auto custom-scrollbar [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                             {['Aksesoris', 'Stiker', 'Teks', 'Frame'].map(tab => (

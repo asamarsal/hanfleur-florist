@@ -52,7 +52,7 @@ export function PhotoboxStep1Dialog({
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-3 sm:p-4">
-            <div className="bg-[#fff1f4] rounded-[2rem] w-full max-w-[1200px] h-[95vh] max-h-[95vh] relative shadow-2xl flex flex-col p-4 sm:p-6 overflow-y-auto border-4 border-white/50">
+            <div className="bg-[#fff1f4] rounded-[2rem] border-4 border-white/50 relative shadow-2xl flex flex-col overflow-y-auto no-scrollbar w-full max-w-[1200px] h-[95vh] max-h-[95vh] p-4 sm:p-6">
 
                 {/* Close Button */}
                 <button
@@ -70,10 +70,10 @@ export function PhotoboxStep1Dialog({
                     }}
                 />
 
-                <div className="flex flex-col md:flex-row gap-6 sm:gap-8 items-center md:items-stretch relative z-10">
+                <div className="flex-1 flex flex-col lg:flex-row gap-6 lg:gap-8 items-center lg:items-stretch relative z-10 min-h-0">
 
                     {/* Left Column - Strip Preview */}
-                    <div className="shrink-0 relative flex items-center justify-center pt-2">
+                    <div className="shrink-0 relative hidden md:flex items-start justify-center pt-0">
                         {/* Decorative hearts floating */}
                         <Heart className="absolute -left-4 top-1/4 h-5 w-5 text-pink-400 fill-pink-400 opacity-70 -rotate-12 drop-shadow-sm" />
                         <Heart className="absolute -left-6 top-1/2 h-4 w-4 text-pink-300 fill-pink-300 opacity-60 rotate-12 drop-shadow-sm" />
