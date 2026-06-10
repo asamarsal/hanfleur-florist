@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import { Sparkle } from '@/components/sparkle'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface BouquetHeroProps {
   activeIndex?: number
@@ -13,6 +13,14 @@ export function BouquetHero({ activeIndex = 0, nextSlide, prevSlide }: BouquetHe
   const covers = ['/cover/cover-1.png', '/cover/cover-2.png', '/cover/cover-3.png']
   const [touchStart, setTouchStart] = useState<number | null>(null)
   const [touchEnd, setTouchEnd] = useState<number | null>(null)
+  const [loadedCount, setLoadedCount] = useState(0)
+
+  useEffect(() => {
+    if (loadedCount >= covers.length) {
+      ;(window as any).heroImagesLoaded = true
+      window.dispatchEvent(new Event('hero-images-loaded'))
+    }
+  }, [loadedCount, covers.length])
 
   const minSwipeDistance = 50
 
@@ -81,6 +89,7 @@ export function BouquetHero({ activeIndex = 0, nextSlide, prevSlide }: BouquetHe
                     className="object-contain pointer-events-none"
                     priority
                     draggable="false"
+                    onLoad={() => setLoadedCount(prev => prev + 1)}
                   />
                 </div>
               ))}

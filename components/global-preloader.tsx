@@ -43,19 +43,21 @@ export function GlobalPreloader() {
       }, 800)
     }
 
-    if (document.readyState === 'complete') {
+    if ((window as any).heroImagesLoaded) {
       finishLoading()
     } else {
-      window.addEventListener('load', finishLoading)
-      return () => window.removeEventListener('load', finishLoading)
+      window.addEventListener('hero-images-loaded', finishLoading)
     }
 
-    // Fallback
+    // Fallback in case hero images fail to load or take too long
     const fallback = setTimeout(() => {
       if (isMounted) finishLoading()
     }, 6000)
 
-    return () => clearTimeout(fallback)
+    return () => {
+      window.removeEventListener('hero-images-loaded', finishLoading)
+      clearTimeout(fallback)
+    }
   }, [isMounted])
 
   if (!isMounted) return null
