@@ -9,6 +9,7 @@ import { DecorativeBackground } from '@/components/decorative-background'
 import { toast } from 'sonner'
 import { PhotoboxStep1Dialog } from '@/components/dialog/photobox/step-1'
 import { PhotoboxStep2Dialog } from '@/components/dialog/photobox/step-2'
+import { PhotoboxStep3Dialog } from '@/components/dialog/photobox/step-3'
 
 const photoboxDesigns = [
   { id: 1, file: 'example1-pb.png', name: 'Romantic Love' },
@@ -53,9 +54,11 @@ function PhotoboxContent() {
 
   const showPreviewModal = step === '1'
   const showEditModal = step === '2'
+  const showDownloadModal = step === '3'
 
   const openPreviewModal = () => router.push('?step=1', { scroll: false })
   const openEditModal = () => router.push('?step=2', { scroll: false })
+  const openDownloadModal = () => router.push('?step=3', { scroll: false })
   const closeModals = () => router.push('?', { scroll: false })
 
   const [isRecording, setIsRecording] = useState(false)
@@ -644,6 +647,19 @@ function PhotoboxContent() {
         photoboxDesigns={photoboxDesigns}
         takenPhotos={takenPhotos}
         onBack={openPreviewModal}
+        onContinue={openDownloadModal}
+      />
+
+      <PhotoboxStep3Dialog
+        isOpen={showDownloadModal}
+        onOpenChange={(open) => {
+          if (!open) closeModals()
+          else openDownloadModal()
+        }}
+        selectedDesignId={selectedDesignId}
+        photoboxDesigns={photoboxDesigns}
+        takenPhotos={takenPhotos}
+        onBack={openEditModal}
       />
 
       {/* Confirmation Dialog for Retaking Photo */}

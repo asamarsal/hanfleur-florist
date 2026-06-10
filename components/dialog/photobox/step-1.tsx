@@ -1,17 +1,18 @@
-import { useState, useEffect, useRef } from 'react'
-import { X, CheckCircle2, Edit2, LayoutGrid, RefreshCw, ArrowRight, Heart, ChevronLeft, ChevronRight } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { X, Edit2, LayoutGrid, RefreshCw, ArrowRight, Heart, ChevronLeft, ChevronRight } from 'lucide-react'
 import { PhotoboxStepper } from './stepper'
+import { PhotoboxPilihDesain } from './pilih-desain'
 
 interface PhotoboxStep1DialogProps {
-    isOpen: boolean;
-    onOpenChange: (open: boolean) => void;
-    selectedDesignId: number;
-    setSelectedDesignId: (id: number) => void;
-    photoboxDesigns: { id: number; file: string; name: string }[];
-    takenPhotos: string[];
-    numPhotos: number;
-    resetPhotos: () => void;
-    onContinue?: () => void;
+    readonly isOpen: boolean;
+    readonly onOpenChange: (open: boolean) => void;
+    readonly selectedDesignId: number;
+    readonly setSelectedDesignId: (id: number) => void;
+    readonly photoboxDesigns: { id: number; file: string; name: string }[];
+    readonly takenPhotos: string[];
+    readonly numPhotos: number;
+    readonly resetPhotos: () => void;
+    readonly onContinue?: () => void;
 }
 
 export function PhotoboxStep1Dialog({
@@ -28,17 +29,6 @@ export function PhotoboxStep1Dialog({
     const [currentPhotoIdx, setCurrentPhotoIdx] = useState(0);
     const [showDesignGrid, setShowDesignGrid] = useState(false);
     const [tempDesignId, setTempDesignId] = useState(selectedDesignId);
-    const premiumScrollRef = useRef<HTMLDivElement>(null);
-
-    const scrollPremium = (direction: 'left' | 'right') => {
-        if (premiumScrollRef.current) {
-            const scrollAmount = 200;
-            premiumScrollRef.current.scrollBy({
-                left: direction === 'left' ? -scrollAmount : scrollAmount,
-                behavior: 'smooth'
-            });
-        }
-    };
 
     useEffect(() => {
         if (isOpen) {
@@ -81,7 +71,7 @@ export function PhotoboxStep1Dialog({
                         <div className="w-[160px] sm:w-[180px] bg-white p-2 sm:p-2.5 rounded-xl shadow-xl border-4 border-white flex flex-col gap-2 relative overflow-hidden">
                             {/* Decorative Background for Strip */}
                             <div className="absolute inset-0 pointer-events-none opacity-40 mix-blend-multiply">
-                                {(showDesignGrid ? tempDesignId : selectedDesignId) && (
+                                {!!(showDesignGrid ? tempDesignId : selectedDesignId) && (
                                     <img
                                         src={`/photobox/photobox-example/${photoboxDesigns.find(d => d.id === (showDesignGrid ? tempDesignId : selectedDesignId))?.file}`}
                                         alt="Strip Background"
@@ -93,7 +83,7 @@ export function PhotoboxStep1Dialog({
                             {/* Photos */}
                             <div className="flex flex-col gap-2 relative z-10">
                                 {takenPhotos.map((photo, i) => (
-                                    <div key={i} className="aspect-[4/3] bg-gray-100 rounded-md border border-gray-200 overflow-hidden relative shadow-sm flex items-center justify-center">
+                                    <div key={photo || `empty-photo-${i}`} className="aspect-[4/3] bg-gray-100 rounded-md border border-gray-200 overflow-hidden relative shadow-sm flex items-center justify-center">
                                         {photo ? (
                                             <img src={photo} alt={`Foto ${i + 1}`} className="w-full h-full object-cover" />
                                         ) : (
@@ -113,7 +103,16 @@ export function PhotoboxStep1Dialog({
 
                     {/* Right Column - Actions & Status or Design Grid */}
                     <div className="flex-1 flex flex-col items-center justify-center w-full bg-white rounded-3xl p-5 sm:p-6 shadow-md relative overflow-hidden">
-                        {!showDesignGrid ? (
+                        {showDesignGrid ? (
+                            <PhotoboxPilihDesain
+                                photoboxDesigns={photoboxDesigns}
+                                selectedDesignId={selectedDesignId}
+                                setSelectedDesignId={setSelectedDesignId}
+                                tempDesignId={tempDesignId}
+                                setTempDesignId={setTempDesignId}
+                                setShowDesignGrid={setShowDesignGrid}
+                            />
+                        ) : (
                             <>
                                 {/* Heading */}
                                 <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#ff3a70] text-center mb-3">
@@ -148,7 +147,8 @@ export function PhotoboxStep1Dialog({
                                         <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5 z-10">
                                             {takenPhotos.map((_, idx) => (
                                                 <button
-                                                    key={idx}
+                                                    // eslint-disable-next-line react/no-array-index-key
+                                                    key={`dot-${idx}`}
                                                     onClick={() => setCurrentPhotoIdx(idx)}
                                                     className={`w-2 h-2 rounded-full transition-all shadow-sm ${idx === currentPhotoIdx ? 'bg-[#ff3a70] scale-125' : 'bg-white/70 hover:bg-white'}`}
                                                 />
@@ -201,109 +201,6 @@ export function PhotoboxStep1Dialog({
                                     </button>
                                 </div>
                             </>
-                        ) : (
-                            <div className="flex flex-col w-full h-full min-h-0">
-                                <style dangerouslySetInnerHTML={{__html: `
-                                    .no-scrollbar::-webkit-scrollbar {
-                                        display: none !important;
-                                    }
-                                    .no-scrollbar {
-                                        -ms-overflow-style: none !important;
-                                        scrollbar-width: none !important;
-                                    }
-                                `}} />
-                                {/* Design Grids */}
-                                <div className="flex-1 flex flex-col overflow-y-auto pr-2 mb-4 no-scrollbar">
-
-                                    {/* Premium Section */}
-                                    <div className="pt-0">
-                                        <div className="flex items-center justify-between mb-4">
-                                            <div>
-                                                <h3 className="font-bold text-yellow-600 text-sm flex items-center gap-2 mb-1">
-                                                    <span>👑</span> Desain Premium
-                                                </h3>
-                                                <p className="text-xs text-gray-500">Lebih eksklusif untuk kenangan tak terlupakan</p>
-                                            </div>
-                                            <div className="flex gap-2 shrink-0">
-                                                <button onClick={() => scrollPremium('left')} className="p-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:bg-pink-50 text-gray-600 hover:text-[#ff3a70] transition-colors">
-                                                    <ChevronLeft className="w-5 h-5" />
-                                                </button>
-                                                <button onClick={() => scrollPremium('right')} className="p-1.5 rounded-full bg-white border border-gray-200 shadow-sm hover:bg-pink-50 text-gray-600 hover:text-[#ff3a70] transition-colors">
-                                                    <ChevronRight className="w-5 h-5" />
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        <div
-                                            ref={premiumScrollRef}
-                                            className="flex gap-3 sm:gap-4 pt-2 px-2 pb-4 overflow-x-auto snap-x no-scrollbar"
-                                        >
-                                            {photoboxDesigns.slice(4).map((design, idx) => {
-                                                const badgeColors = ['bg-pink-500', 'bg-orange-500', 'bg-yellow-600', 'bg-purple-500', 'bg-blue-500'];
-                                                const badges = ['Best Seller', 'Premium', 'Premium', 'Unlock', 'Unlock'];
-                                                return (
-                                                    <div
-                                                        key={design.id}
-                                                        onClick={() => setTempDesignId(design.id)}
-                                                        className={`shrink-0 w-[110px] sm:w-[120px] relative rounded-xl cursor-pointer border-2 transition-all duration-300 group shadow-sm bg-white aspect-[1/3] flex flex-col snap-start ${tempDesignId === design.id ? 'border-[#ff3a70] ring-2 ring-pink-200 shadow-md scale-100' : 'border-gray-100 hover:border-pink-300 hover:shadow-md scale-95 opacity-80 hover:opacity-100'}`}
-                                                    >
-                                                        {tempDesignId === design.id && (
-                                                            <div className="absolute -top-2 -right-2 z-20 bg-[#ff3a70] text-white rounded-full p-1 shadow-md border-2 border-white scale-110">
-                                                                <CheckCircle2 className="w-3.5 h-3.5" />
-                                                            </div>
-                                                        )}
-                                                        <div className="w-full h-full rounded-[10px] overflow-hidden flex flex-col relative">
-                                                            <div className={`absolute top-0 left-0 right-0 ${badgeColors[idx % badgeColors.length]} text-white text-[9px] font-bold text-center py-0.5 z-10`}>
-                                                                {badges[idx % badges.length]}
-                                                            </div>
-                                                            <div className="flex-1 relative mt-3">
-                                                                <img src={`/photobox/photobox-example/${design.file}`} className="w-full h-full object-cover" alt={design.name} />
-                                                            </div>
-                                                            <div className="bg-white text-center py-1 border-t border-gray-100">
-                                                                <span className="text-[9px] font-bold text-gray-800">Rp15.000</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Action Buttons (Same layout as original) */}
-                                <div className="w-full flex flex-col gap-2.5 mt-auto shrink-0">
-                                    <div className="flex w-full gap-2 sm:gap-2.5">
-                                        <button onClick={() => {
-                                            setTempDesignId(selectedDesignId); // Revert
-                                            setShowDesignGrid(false);
-                                        }} className="flex-1 py-2 px-1 sm:px-2 bg-white text-[#ff3a70] rounded-xl font-bold text-[10px] sm:text-xs flex flex-col lg:flex-row items-center justify-center gap-1 sm:gap-1.5 border border-pink-200 hover:border-[#ff3a70] hover:bg-pink-50 transition-all shadow-sm text-center leading-tight">
-                                            <ChevronLeft className="h-3.5 w-3.5 shrink-0" />
-                                            <span>Kembali</span>
-                                        </button>
-                                        <button onClick={() => setTempDesignId(1)} className="flex-1 py-2 px-1 sm:px-2 bg-white text-[#ff3a70] rounded-xl font-bold text-[10px] sm:text-xs flex flex-col lg:flex-row items-center justify-center gap-1 sm:gap-1.5 border border-pink-200 hover:border-[#ff3a70] hover:bg-pink-50 transition-all shadow-sm text-center leading-tight">
-                                            <RefreshCw className="h-3.5 w-3.5 shrink-0" />
-                                            <span>Default</span>
-                                        </button>
-                                        <div className="flex-1 py-2 px-1 sm:px-2 bg-white text-[#ff3a70] rounded-xl font-bold text-[10px] sm:text-xs flex flex-col lg:flex-row items-center justify-center gap-1 sm:gap-1.5 border border-pink-200 shadow-sm text-center leading-tight cursor-default opacity-90">
-                                            {tempDesignId <= 4 ? (
-                                                <>✨ <span className="hidden lg:inline">Desain </span>Gratis</>
-                                            ) : (
-                                                <>👑 <span className="hidden lg:inline">Pilih </span>Premium</>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <button
-                                        onClick={() => {
-                                            setSelectedDesignId(tempDesignId);
-                                            setShowDesignGrid(false);
-                                        }}
-                                        className="w-full py-3 px-4 bg-[#ff3a70] text-white rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 hover:bg-[#e02e5b] transition-all shadow-md mt-0.5"
-                                    >
-                                        Gunakan Desain Ini
-                                        <ArrowRight className="h-4 w-4" />
-                                    </button>
-                                </div>
-                            </div>
                         )}
                     </div>
                 </div>

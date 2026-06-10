@@ -9,6 +9,7 @@ interface PhotoboxStep2DialogProps {
     selectedDesignId: number;
     photoboxDesigns: { id: number; file: string; name: string }[];
     onBack?: () => void;
+    onContinue?: () => void;
 }
 
 export function PhotoboxStep2Dialog({
@@ -17,7 +18,8 @@ export function PhotoboxStep2Dialog({
     takenPhotos,
     selectedDesignId,
     photoboxDesigns,
-    onBack
+    onBack,
+    onContinue
 }: PhotoboxStep2DialogProps) {
     const [activeTab, setActiveTab] = useState('Aksesoris')
     const [currentPhotoIdx, setCurrentPhotoIdx] = useState(0)
@@ -192,8 +194,14 @@ export function PhotoboxStep2Dialog({
                                     <span>Simpan<br className="sm:hidden" /> Edit</span>
                                 </button>
                             </div>
-                            <button className="w-full py-3 px-4 bg-[#ff3a70] text-white rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 hover:bg-[#e02e5b] transition-all shadow-md mt-0.5">
-                                Lanjutkan ke Desain
+                            <button
+                                onClick={() => {
+                                    if (onContinue) onContinue();
+                                    else onOpenChange(false);
+                                }}
+                                className="w-full py-3 px-4 bg-[#ff3a70] text-white rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 hover:bg-[#e02e5b] transition-all shadow-md mt-0.5"
+                            >
+                                Lanjutkan ke Download
                                 <ArrowRight className="h-4 w-4 shrink-0" />
                             </button>
                         </div>
