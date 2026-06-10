@@ -1,12 +1,14 @@
 'use client'
 
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Camera, RefreshCw, SwitchCamera, ArrowRight, Check, Sparkles, SmilePlus, Smile, Maximize, Minimize, Sun, Heart, ChevronLeft, ChevronRight, X, CheckCircle2, Edit2, LayoutGrid, Lock } from 'lucide-react'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 import { DecorativeBackground } from '@/components/decorative-background'
 import { toast } from 'sonner'
 import { PhotoboxStep1Dialog } from '@/components/dialog/photobox/step-1'
+import { PhotoboxStep2Dialog } from '@/components/dialog/photobox/step-2'
 
 const photoboxDesigns = [
   { id: 1, file: 'example1-pb.png', name: 'Romantic Love' },
@@ -21,7 +23,10 @@ const photoboxDesigns = [
   { id: 10, file: 'example11-pb.png', name: 'Happy Moments' },
 ]
 
-export default function PhotoboxPage() {
+function PhotoboxContent() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const step = searchParams.get('step')
   const videoRef = useRef<HTMLVideoElement>(null)
   const [stream, setStream] = useState<MediaStream | null>(null)
   const streamRef = useRef<MediaStream | null>(null)
@@ -33,7 +38,25 @@ export default function PhotoboxPage() {
   const [numPhotos, setNumPhotos] = useState<3 | 4>(4)
   const [selectedDesignId, setSelectedDesignId] = useState(1)
   const [takenPhotos, setTakenPhotos] = useState<string[]>([])
-  const [showPreviewModal, setShowPreviewModal] = useState(false)
+  const [photoToRetakeIdx, setPhotoToRetakeIdx] = useState<number | null>(null)
+
+  const handleRetakeConfirm = () => {
+    if (photoToRetakeIdx !== null) {
+      setTakenPhotos(prev => {
+        const next = [...prev]
+        next[photoToRetakeIdx] = ""
+        return next
+      })
+      setPhotoToRetakeIdx(null)
+    }
+  }
+
+  const showPreviewModal = step === '1'
+  const showEditModal = step === '2'
+
+  const openPreviewModal = () => router.push('?step=1', { scroll: false })
+  const openEditModal = () => router.push('?step=2', { scroll: false })
+  const closeModals = () => router.push('?', { scroll: false })
 
   const [isRecording, setIsRecording] = useState(false)
   const [countdown, setCountdown] = useState<number | null>(null)
@@ -155,7 +178,8 @@ export default function PhotoboxPage() {
   const takePhoto = () => {
     if (!stream || isRecording) return
     // Reset if we already took photos and want to take a new strip
-    if (takenPhotos.length >= numPhotos) {
+    const hasEmptySlot = takenPhotos.length < numPhotos || takenPhotos.some(p => !p)
+    if (!hasEmptySlot) {
       setTakenPhotos([])
     }
     setIsRecording(true)
@@ -201,7 +225,13 @@ export default function PhotoboxPage() {
           const dataUrl = canvas.toDataURL('image/png')
 
           setTakenPhotos(prev => {
-            const nextPhotos = [...prev, dataUrl]
+            const emptyIdx = prev.findIndex(p => !p)
+            let nextPhotos = [...prev]
+            if (emptyIdx !== -1) {
+              nextPhotos[emptyIdx] = dataUrl
+            } else {
+              nextPhotos.push(dataUrl)
+            }
             setIsRecording(false)
             setCountdown(null)
             return nextPhotos
@@ -426,7 +456,7 @@ export default function PhotoboxPage() {
                         toast.error(`Selesaikan pengambilan ${numPhotos} foto terlebih dahulu!`);
                         return;
                       }
-                      setShowPreviewModal(true);
+                      openPreviewModal();
                     }}
                     className={`flex-1 min-w-[140px] py-3 px-4 bg-[#ff3a70] text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-colors shadow-sm hover:bg-[#e02e5b] ${takenPhotos.length < numPhotos ? 'cursor-not-allowed' : ''}`}
                   >
@@ -523,7 +553,15 @@ export default function PhotoboxPage() {
                       {previewSlots.map((_, i) => {
                         const photo = takenPhotos[i];
                         return (
-                          <div key={i} className="aspect-[5/3] bg-gray-100/80 backdrop-blur-sm rounded border border-gray-200 flex items-center justify-center shadow-inner overflow-hidden relative">
+                          <div
+                            key={i}
+                            onClick={() => {
+                              if (photo) {
+                                setPhotoToRetakeIdx(i)
+                              }
+                            }}
+                            className={`aspect-[5/3] bg-gray-100/80 backdrop-blur-sm rounded border border-gray-200 flex items-center justify-center shadow-inner overflow-hidden relative ${photo ? 'cursor-pointer hover:border-hf-rose hover:scale-[1.02] transition-all' : ''}`}
+                          >
                             {photo ? (
                               <img src={photo} alt={`Foto ${i + 1}`} className="w-full h-full object-cover" />
                             ) : (
@@ -581,15 +619,67 @@ export default function PhotoboxPage() {
         <Footer />
       </div>
 
-      <PhotoboxStep1Dialog 
+      <PhotoboxStep1Dialog
         isOpen={showPreviewModal}
-        onOpenChange={setShowPreviewModal}
+        onOpenChange={(open) => {
+          if (!open) closeModals()
+          else openPreviewModal()
+        }}
         selectedDesignId={selectedDesignId}
+        setSelectedDesignId={setSelectedDesignId}
         photoboxDesigns={photoboxDesigns}
         takenPhotos={takenPhotos}
         numPhotos={numPhotos}
         resetPhotos={resetPhotos}
+        onContinue={openEditModal}
       />
+
+      <PhotoboxStep2Dialog
+        isOpen={showEditModal}
+        onOpenChange={(open) => {
+          if (!open) closeModals()
+          else openEditModal()
+        }}
+        selectedDesignId={selectedDesignId}
+        photoboxDesigns={photoboxDesigns}
+        takenPhotos={takenPhotos}
+        onBack={openPreviewModal}
+      />
+
+      {/* Confirmation Dialog for Retaking Photo */}
+      {photoToRetakeIdx !== null && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-3xl p-6 max-w-sm w-full mx-4 shadow-2xl border border-pink-100 flex flex-col items-center text-center animate-in fade-in zoom-in-95 duration-200">
+            <div className="w-12 h-12 bg-pink-50 rounded-full flex items-center justify-center text-[#ff3a70] mb-4">
+              <Camera className="w-6 h-6" />
+            </div>
+            <h3 className="text-lg font-bold text-gray-800 mb-2">Ambil Ulang Foto?</h3>
+            <p className="text-sm text-gray-500 mb-6">Apakah Anda yakin ingin mengambil ulang foto ke-{photoToRetakeIdx + 1}? Foto yang sudah diambil sebelumnya pada slot ini akan dihapus.</p>
+            <div className="flex w-full gap-3">
+              <button
+                onClick={() => setPhotoToRetakeIdx(null)}
+                className="flex-1 py-2.5 px-4 text-black rounded-xl font-bold text-sm"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleRetakeConfirm}
+                className="flex-1 py-2.5 px-4 bg-[#ff3a70] text-white rounded-xl font-bold text-sm hover:bg-[#e02e5b] transition-colors shadow-md shadow-pink-200"
+              >
+                Ya, Hapus
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
+  )
+}
+
+export default function PhotoboxPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#fadde4] flex items-center justify-center">Loading...</div>}>
+      <PhotoboxContent />
+    </Suspense>
   )
 }
