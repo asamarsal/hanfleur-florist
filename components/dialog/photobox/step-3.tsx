@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { X, Heart, Crown, QrCode as QrCodeIcon, Wallet, Landmark, Check, ImageIcon, CheckCircle2, Printer, Download, Mail, RefreshCcw, Lock } from 'lucide-react'
 import QRCode from 'react-qr-code'
 import { PhotoboxStepper } from './stepper'
+import { StripPreview, ElementData } from './strip-preview'
 
 interface PhotoboxStep3DialogProps {
     isOpen: boolean;
@@ -9,6 +10,7 @@ interface PhotoboxStep3DialogProps {
     selectedDesignId: number;
     photoboxDesigns: { id: number; file: string; name: string }[];
     takenPhotos: string[];
+    photoElements: Record<number, ElementData[]>;
     onBack?: () => void;
 }
 
@@ -18,6 +20,7 @@ export function PhotoboxStep3Dialog({
     selectedDesignId,
     photoboxDesigns,
     takenPhotos,
+    photoElements,
     onBack,
 }: PhotoboxStep3DialogProps) {
     // 14 minutes and 53 seconds = 893 seconds
@@ -74,39 +77,12 @@ export function PhotoboxStep3Dialog({
 
                     {/* Left Column - Strip Preview */}
                     <div className="shrink-0 relative hidden md:flex items-start justify-center pt-0">
-                        {/* Decorative hearts floating */}
-                        <Heart className="absolute -left-4 top-1/4 h-5 w-5 text-pink-400 fill-pink-400 opacity-70 -rotate-12 drop-shadow-sm" />
-                        <Heart className="absolute -left-6 top-1/2 h-4 w-4 text-pink-300 fill-pink-300 opacity-60 rotate-12 drop-shadow-sm" />
-
-                        <div className="w-[160px] sm:w-[180px] bg-white p-2 sm:p-2.5 rounded-xl shadow-xl border-4 border-white flex flex-col gap-2 relative overflow-hidden">
-                            <div className="absolute inset-0 pointer-events-none opacity-40 mix-blend-multiply">
-                                {selectedDesignId && design && (
-                                    <img
-                                        src={`/photobox/photobox-example/${design.file}`}
-                                        alt="Strip Background"
-                                        className="w-full h-full object-cover blur-sm opacity-50"
-                                    />
-                                )}
-                            </div>
-
-                            <div className="flex flex-col gap-2 relative z-10">
-                                {takenPhotos.map((photo, i) => (
-                                    // eslint-disable-next-line react/no-array-index-key
-                                    <div key={photo || `empty-photo-${i}`} className="aspect-[4/3] bg-gray-100 rounded-md border border-gray-200 overflow-hidden relative shadow-sm flex items-center justify-center">
-                                        {photo ? (
-                                            <img src={photo} alt={`Foto ${i + 1}`} className="w-full h-full object-cover" />
-                                        ) : (
-                                            <span className="text-xl font-bold text-gray-400">{i + 1}</span>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
-
-                            <div className="mt-2 text-center relative z-10 py-1">
-                                <p className="font-serif text-[#ff3a70] font-bold text-[14px] leading-none">Hanfleur</p>
-                                <p className="font-serif text-[#ff3a70] font-bold text-[14px] leading-none mt-0.5">Florist</p>
-                            </div>
-                        </div>
+                        <StripPreview
+                            takenPhotos={takenPhotos}
+                            photoElements={photoElements}
+                            selectedDesignId={selectedDesignId}
+                            photoboxDesigns={photoboxDesigns}
+                        />
                     </div>
 
                     {/* Middle Column - Pembayaran */}

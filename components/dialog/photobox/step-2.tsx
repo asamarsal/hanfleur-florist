@@ -1,6 +1,9 @@
-import { useState, useEffect } from 'react'
-import { Maximize, Minimize, X, RefreshCw, Heart, Smile, ChevronLeft, CheckCircle2, ArrowRight, Lock } from 'lucide-react'
+import React, { useState, useEffect, useRef } from 'react'
+import { Maximize, Minimize, X, RefreshCw, Heart, Smile, ChevronLeft, CheckCircle2, ArrowRight, Trash2 } from 'lucide-react'
 import { PhotoboxStepper } from './stepper'
+import { Stage, Layer, Image as KonvaImage, Text, Transformer, Rect } from 'react-konva';
+import useImage from 'use-image';
+import { StripPreview, ElementData } from './strip-preview'
 
 interface PhotoboxStep2DialogProps {
     isOpen: boolean;
@@ -8,9 +11,96 @@ interface PhotoboxStep2DialogProps {
     takenPhotos: string[];
     selectedDesignId: number;
     photoboxDesigns: { id: number; file: string; name: string }[];
+    photoElements: Record<number, ElementData[]>;
+    setPhotoElements: React.Dispatch<React.SetStateAction<Record<number, ElementData[]>>>;
     onBack?: () => void;
     onContinue?: () => void;
 }
+
+// Removed duplicate ElementData interface
+
+// Sticker component with transform capabilities
+const Sticker = ({ shapeProps, isSelected, onSelect, onChange }: any) => {
+    const shapeRef = useRef<any>();
+    const trRef = useRef<any>();
+
+    useEffect(() => {
+        if (isSelected) {
+            trRef.current.nodes([shapeRef.current]);
+            trRef.current.getLayer().batchDraw();
+        }
+    }, [isSelected]);
+
+    return (
+        <React.Fragment>
+            <Text
+                onClick={onSelect}
+                onTap={onSelect}
+                ref={shapeRef}
+                {...shapeProps}
+                draggable
+                onDragMove={(e) => {
+                    onChange({
+                        ...shapeProps,
+                        x: e.target.x(),
+                        y: e.target.y(),
+                    });
+                }}
+                onDragEnd={(e) => {
+                    onChange({
+                        ...shapeProps,
+                        x: e.target.x(),
+                        y: e.target.y(),
+                    });
+                }}
+                onTransform={(e) => {
+                    const node = shapeRef.current;
+                    onChange({
+                        ...shapeProps,
+                        x: node.x(),
+                        y: node.y(),
+                        rotation: node.rotation(),
+                        scaleX: node.scaleX(),
+                        scaleY: node.scaleY(),
+                    });
+                }}
+                onTransformEnd={(e) => {
+                    const node = shapeRef.current;
+                    onChange({
+                        ...shapeProps,
+                        x: node.x(),
+                        y: node.y(),
+                        rotation: node.rotation(),
+                        scaleX: node.scaleX(),
+                        scaleY: node.scaleY(),
+                    });
+                }}
+            />
+            {isSelected && (
+                <Transformer
+                    ref={trRef}
+                    padding={5}
+                    anchorSize={12}
+                    anchorCornerRadius={6}
+                    borderDash={[5, 5]}
+                    boundBoxFunc={(oldBox, newBox) => {
+                        // limit resize
+                        if (Math.abs(newBox.width) < 5 || Math.abs(newBox.height) < 5) {
+                            return oldBox;
+                        }
+                        return newBox;
+                    }}
+                />
+            )}
+        </React.Fragment>
+    );
+};
+
+// Background image component
+const BackgroundImage = ({ src, width, height }: { src: string, width: number, height: number }) => {
+    const [image] = useImage(src, 'anonymous');
+    return image ? <KonvaImage image={image} width={width} height={height} name="bg" /> : <Rect width={width} height={height} fill="#f3f4f6" name="bg" />;
+};
 
 export function PhotoboxStep2Dialog({
     isOpen,
@@ -18,6 +108,8 @@ export function PhotoboxStep2Dialog({
     takenPhotos,
     selectedDesignId,
     photoboxDesigns,
+    photoElements,
+    setPhotoElements,
     onBack,
     onContinue
 }: PhotoboxStep2DialogProps) {
@@ -25,6 +117,27 @@ export function PhotoboxStep2Dialog({
     const [currentPhotoIdx, setCurrentPhotoIdx] = useState(0)
     const [isFullscreen, setIsFullscreen] = useState(false)
 
+    // Editor States
+    const [selectedId, setSelectedId] = useState<string | null>(null);
+    const [draggedItem, setDraggedItem] = useState<string | null>(null);
+    const stageRef = useRef<any>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+
+    const VIRTUAL_WIDTH = 1200;
+    const VIRTUAL_HEIGHT = 900;
+
+    // Helper to get/set elements for current photo
+    const elements = photoElements[currentPhotoIdx] || [];
+    const setElements = (newEls: ElementData[] | ((prev: ElementData[]) => ElementData[])) => {
+        setPhotoElements(prev => {
+            const currentEls = prev[currentPhotoIdx] || [];
+            const updated = typeof newEls === 'function' ? newEls(currentEls) : newEls;
+            return { ...prev, [currentPhotoIdx]: updated };
+        });
+    };
+
+    // Fullscreen handling
     const toggleFullscreen = () => {
         if (!document.fullscreenElement) {
             document.documentElement.requestFullscreen().catch(err => {
@@ -39,7 +152,6 @@ export function PhotoboxStep2Dialog({
         }
     }
 
-    // Listen for fullscreen changes (e.g. user pressing ESC)
     useEffect(() => {
         const handleFullscreenChange = () => {
             setIsFullscreen(!!document.fullscreenElement);
@@ -48,11 +160,62 @@ export function PhotoboxStep2Dialog({
         return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
     }, []);
 
+    // Resize observer for responsive canvas
     useEffect(() => {
-        if (isOpen) setCurrentPhotoIdx(0);
+        if (!containerRef.current) return;
+        const observer = new ResizeObserver((entries) => {
+            for (let entry of entries) {
+                setDimensions({
+                    width: entry.contentRect.width,
+                    height: entry.contentRect.height
+                });
+            }
+        });
+        observer.observe(containerRef.current);
+        return () => observer.disconnect();
+    }, [isFullscreen, isOpen]);
+
+    // Keyboard delete event
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Backspace' || e.key === 'Delete') {
+                if (selectedId) {
+                    setElements(elements.filter(el => el.id !== selectedId));
+                    setSelectedId(null);
+                }
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [selectedId, elements]);
+
+    useEffect(() => {
+        if (isOpen) {
+            setCurrentPhotoIdx(0);
+        }
     }, [isOpen]);
 
     if (!isOpen) return null;
+
+    const checkDeselect = (e: any) => {
+        const clickedOnEmpty = e.target === e.target.getStage() || e.target.hasName('bg');
+        if (clickedOnEmpty) {
+            setSelectedId(null);
+        }
+    };
+
+    const addElementToCenter = (icon: string) => {
+        setElements(prev => [...prev, {
+            id: Date.now().toString(),
+            text: icon,
+            x: VIRTUAL_WIDTH / 2 - 40,
+            y: VIRTUAL_HEIGHT / 2 - 40,
+            fontSize: 80,
+            rotation: 0,
+            scaleX: 1,
+            scaleY: 1
+        }]);
+    };
 
     const accessories = [
         { name: 'Topi Lucu', icon: '👒' },
@@ -104,43 +267,93 @@ export function PhotoboxStep2Dialog({
 
                     {/* Left Column - Strip Preview */}
                     <div className="shrink-0 relative hidden md:flex items-start justify-center pt-0">
-                        <Heart className="absolute -left-4 top-1/4 h-5 w-5 text-pink-400 fill-pink-400 opacity-70 -rotate-12 drop-shadow-sm" />
-                        <Heart className="absolute -left-6 top-1/2 h-4 w-4 text-pink-300 fill-pink-300 opacity-60 rotate-12 drop-shadow-sm" />
-
-                        <div className="w-[160px] sm:w-[180px] bg-white p-2 sm:p-2.5 rounded-xl shadow-xl border-4 border-white flex flex-col gap-2 relative overflow-hidden">
-                            <div className="absolute inset-0 pointer-events-none opacity-40 mix-blend-multiply">
-                                {selectedDesignId && photoboxDesigns.find(d => d.id === selectedDesignId)?.file && (
-                                    <img
-                                        src={`/photobox/photobox-example/${photoboxDesigns.find(d => d.id === selectedDesignId)?.file}`}
-                                        alt="Strip Background"
-                                        className="w-full h-full object-cover blur-sm opacity-50"
-                                    />
-                                )}
-                            </div>
-
-                            <div className="flex flex-col gap-2 relative z-10">
-                                {takenPhotos.map((photo, i) => (
-                                    <div
-                                        key={i}
-                                        onClick={() => setCurrentPhotoIdx(i)}
-                                        className={`aspect-[4/3] rounded-md overflow-hidden relative shadow-sm cursor-pointer transition-all border-2 ${currentPhotoIdx === i ? 'border-[#ff3a70]' : 'border-gray-200'}`}
-                                    >
-                                        <img src={photo || '/placeholder.jpg'} alt={`Foto ${i + 1}`} className="w-full h-full object-cover" />
-                                    </div>
-                                ))}
-                            </div>
-
-                            <div className="mt-2 text-center relative z-10 py-1">
-                                <p className="font-serif text-[#ff3a70] font-bold text-[14px] leading-none">Hanfleur</p>
-                                <p className="font-serif text-[#ff3a70] font-bold text-[14px] leading-none mt-0.5">Florist</p>
-                            </div>
-                        </div>
+                        <StripPreview
+                            takenPhotos={takenPhotos}
+                            photoElements={photoElements}
+                            selectedDesignId={selectedDesignId}
+                            photoboxDesigns={photoboxDesigns}
+                            currentPhotoIdx={currentPhotoIdx}
+                            onPhotoClick={(idx) => {
+                                setCurrentPhotoIdx(idx);
+                                setSelectedId(null);
+                            }}
+                        />
                     </div>
 
                     {/* Middle Column - Canvas */}
                     <div className="flex-1 flex flex-col items-center justify-between w-full max-w-[500px] lg:max-w-none pt-2 lg:pt-0">
-                        <div className="w-full aspect-[4/3] bg-gray-100 rounded-[1.5rem] overflow-hidden border-4 border-white shadow-xl relative group">
-                            <img src={takenPhotos[currentPhotoIdx] || '/placeholder.jpg'} className="w-full h-full object-cover" alt="Active Photo" />
+                        <div 
+                            ref={containerRef}
+                            className="w-full aspect-[4/3] bg-gray-100 rounded-[1.5rem] overflow-hidden border-4 border-white shadow-xl relative group"
+                            onDrop={(e) => {
+                                e.preventDefault();
+                                if (!stageRef.current) return;
+                                stageRef.current.setPointersPositions(e);
+                                const pos = stageRef.current.getPointerPosition();
+                                
+                                const scale = Math.min(
+                                    dimensions.width / VIRTUAL_WIDTH,
+                                    dimensions.height / VIRTUAL_HEIGHT
+                                );
+
+                                if (pos && draggedItem) {
+                                    setElements(prev => [...prev, {
+                                        id: Date.now().toString(),
+                                        text: draggedItem,
+                                        x: (pos.x / scale) - 40,
+                                        y: (pos.y / scale) - 40,
+                                        fontSize: 80,
+                                        rotation: 0,
+                                        scaleX: 1,
+                                        scaleY: 1
+                                    }]);
+                                    setDraggedItem(null);
+                                }
+                            }}
+                            onDragOver={(e) => e.preventDefault()}
+                        >
+                            {dimensions.width > 0 && (
+                                <Stage
+                                    width={dimensions.width}
+                                    height={dimensions.height}
+                                    scaleX={Math.min(dimensions.width / VIRTUAL_WIDTH, dimensions.height / VIRTUAL_HEIGHT)}
+                                    scaleY={Math.min(dimensions.width / VIRTUAL_WIDTH, dimensions.height / VIRTUAL_HEIGHT)}
+                                    onMouseDown={checkDeselect}
+                                    onTouchStart={checkDeselect}
+                                    ref={stageRef}
+                                >
+                                    <Layer>
+                                        <BackgroundImage src={takenPhotos[currentPhotoIdx] || '/placeholder.jpg'} width={VIRTUAL_WIDTH} height={VIRTUAL_HEIGHT} />
+                                        {elements.map((el, i) => (
+                                            <Sticker
+                                                key={el.id}
+                                                shapeProps={el}
+                                                isSelected={el.id === selectedId}
+                                                onSelect={() => setSelectedId(el.id)}
+                                                onChange={(newAttrs: ElementData) => {
+                                                    const rects = elements.slice();
+                                                    rects[i] = newAttrs;
+                                                    setElements(rects);
+                                                }}
+                                            />
+                                        ))}
+                                    </Layer>
+                                </Stage>
+                            )}
+
+                            {/* Delete Selected Item Button Overlay */}
+                            {selectedId && (
+                                <button
+                                    onClick={() => {
+                                        setElements(elements.filter(el => el.id !== selectedId));
+                                        setSelectedId(null);
+                                    }}
+                                    className="absolute top-4 right-4 bg-red-500/80 hover:bg-red-500 text-white px-3 py-2 rounded-xl transition-colors z-20 shadow-md backdrop-blur-md flex items-center gap-2"
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                    <span className="text-xs font-bold hidden sm:inline">Hapus</span>
+                                </button>
+                            )}
 
                             {/* Fullscreen Button */}
                             <button
@@ -150,29 +363,15 @@ export function PhotoboxStep2Dialog({
                             >
                                 {isFullscreen ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
                             </button>
-
-                            {/* Example active sticker bounding box as seen in the mockup */}
-                            <div className="absolute top-[15%] right-[20%] w-[120px] h-[120px] border-2 border-dashed border-white bg-white/10 flex items-center justify-center rotate-12 cursor-move hover:border-pink-300 transition-colors group-hover:opacity-100 opacity-80">
-                                <div className="text-[70px] drop-shadow-md">👒</div>
-                                <div className="absolute -top-3 -right-3 w-6 h-6 bg-white rounded-full shadow flex items-center justify-center text-xs text-gray-500 cursor-pointer hover:bg-gray-100 hover:text-red-500 border border-gray-200 transition-colors">
-                                    <X className="w-3 h-3" />
-                                </div>
-                                <div className="absolute -bottom-3 -right-3 w-6 h-6 bg-white rounded-full shadow flex items-center justify-center text-xs text-gray-500 cursor-pointer hover:bg-gray-100 border border-gray-200 transition-colors">
-                                    <RefreshCw className="w-3 h-3" />
-                                </div>
-                            </div>
-
-                            {/* Decorative Floating Hearts over Canvas */}
-                            <Heart className="absolute top-[30%] left-[10%] h-8 w-8 text-pink-300 fill-pink-300 opacity-80 -rotate-12 drop-shadow-md" />
-                            <Heart className="absolute bottom-[20%] right-[10%] h-6 w-6 text-pink-400 fill-pink-400 opacity-70 rotate-12 drop-shadow-md" />
                         </div>
+                        
                         {!isFullscreen && (
                             <p className="mt-4 text-center text-sm text-gray-500 flex flex-col items-center gap-1">
-                                <span className="flex items-center gap-1.5"><Smile className="w-4 h-4 text-[#ff3a70]" /> Drag & drop aksesoris atau stiker ke foto</span>
+                                <span className="flex items-center gap-1.5"><Smile className="w-4 h-4 text-[#ff3a70]" /> Drag & drop aksesoris ke foto, atau klik untuk menambahkannya.</span>
                             </p>
                         )}
 
-                        {/* Action Buttons Moved Under Canvas */}
+                        {/* Action Buttons */}
                         <div className="w-full flex flex-col gap-2.5 mt-auto pt-6 shrink-0">
                             <div className="flex w-full gap-2 sm:gap-2.5">
                                 <button
@@ -185,7 +384,13 @@ export function PhotoboxStep2Dialog({
                                     <ChevronLeft className="h-3.5 w-3.5 shrink-0" />
                                     <span>Kembali</span>
                                 </button>
-                                <button className="flex-1 py-2 px-1 sm:px-2 bg-white text-[#ff3a70] rounded-xl font-bold text-[10px] sm:text-xs flex flex-col lg:flex-row items-center justify-center gap-1 sm:gap-1.5 border border-pink-200 hover:border-[#ff3a70] hover:bg-pink-50 transition-all shadow-sm text-center leading-tight">
+                                <button 
+                                    onClick={() => {
+                                        setElements([]);
+                                        setSelectedId(null);
+                                    }}
+                                    className="flex-1 py-2 px-1 sm:px-2 bg-white text-[#ff3a70] rounded-xl font-bold text-[10px] sm:text-xs flex flex-col lg:flex-row items-center justify-center gap-1 sm:gap-1.5 border border-pink-200 hover:border-[#ff3a70] hover:bg-pink-50 transition-all shadow-sm text-center leading-tight"
+                                >
                                     <RefreshCw className="h-3.5 w-3.5 shrink-0" />
                                     <span>Reset</span>
                                 </button>
@@ -232,9 +437,16 @@ export function PhotoboxStep2Dialog({
                                     </div>
                                     <div className="grid grid-cols-4 gap-2">
                                         {accessories.map((acc, idx) => (
-                                            <div key={acc.name} className={`aspect-square bg-gray-50 rounded-[14px] border flex flex-col items-center justify-center p-2 cursor-pointer transition-all group ${idx === 0 ? 'border-[#ff3a70] bg-pink-50/30 shadow-sm' : 'border-gray-100 hover:border-pink-300 hover:shadow-sm'}`}>
-                                                <div className="text-2xl group-hover:scale-110 transition-transform drop-shadow-sm">{acc.icon}</div>
-                                                <span className="text-[8px] text-center mt-1.5 text-gray-500 font-medium leading-tight px-0.5">{acc.name}</span>
+                                            <div 
+                                                key={acc.name} 
+                                                draggable
+                                                onDragStart={(e) => {
+                                                    setDraggedItem(acc.icon);
+                                                }}
+                                                onClick={() => addElementToCenter(acc.icon)}
+                                                className={`aspect-square bg-gray-50 rounded-[14px] border flex flex-col items-center justify-center p-2 cursor-pointer transition-all group ${idx === 0 ? 'border-[#ff3a70] bg-pink-50/30 shadow-sm' : 'border-gray-100 hover:border-pink-300 hover:shadow-sm'}`}>
+                                                <div className="text-2xl group-hover:scale-110 transition-transform drop-shadow-sm pointer-events-none">{acc.icon}</div>
+                                                <span className="text-[8px] text-center mt-1.5 text-gray-500 font-medium leading-tight px-0.5 pointer-events-none">{acc.name}</span>
                                             </div>
                                         ))}
                                     </div>
@@ -248,9 +460,16 @@ export function PhotoboxStep2Dialog({
                                     </div>
                                     <div className="grid grid-cols-4 gap-2">
                                         {stickers.map(stk => (
-                                            <div key={stk.name} className="aspect-square bg-gray-50 rounded-[14px] border border-gray-100 flex flex-col items-center justify-center p-2 hover:border-pink-300 hover:shadow-sm cursor-pointer transition-all group">
-                                                <div className="text-2xl group-hover:scale-110 transition-transform drop-shadow-sm">{stk.icon}</div>
-                                                <span className="text-[8px] text-center mt-1.5 text-gray-500 font-medium leading-tight px-0.5">{stk.name}</span>
+                                            <div 
+                                                key={stk.name} 
+                                                draggable
+                                                onDragStart={(e) => {
+                                                    setDraggedItem(stk.icon);
+                                                }}
+                                                onClick={() => addElementToCenter(stk.icon)}
+                                                className="aspect-square bg-gray-50 rounded-[14px] border border-gray-100 flex flex-col items-center justify-center p-2 hover:border-pink-300 hover:shadow-sm cursor-pointer transition-all group">
+                                                <div className="text-2xl group-hover:scale-110 transition-transform drop-shadow-sm pointer-events-none">{stk.icon}</div>
+                                                <span className="text-[8px] text-center mt-1.5 text-gray-500 font-medium leading-tight px-0.5 pointer-events-none">{stk.name}</span>
                                             </div>
                                         ))}
                                     </div>
@@ -261,7 +480,7 @@ export function PhotoboxStep2Dialog({
                         {/* Tips Bottom */}
                         <div className="mt-4 pt-3 shrink-0 flex items-start gap-2 text-xs text-yellow-600 bg-yellow-50/80 border border-yellow-100 p-2.5 rounded-xl">
                             <span className="shrink-0 text-yellow-500 text-sm leading-none">💡</span>
-                            <p className="leading-tight">Tips: Gunakan 1-3 elemen agar hasil tetap cantik</p>
+                            <p className="leading-tight">Tips: Gunakan 1-3 elemen agar hasil tetap cantik. Tekan 'Delete' untuk menghapus stiker.</p>
                         </div>
                     </div>
 

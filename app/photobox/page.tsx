@@ -10,6 +10,7 @@ import { toast } from 'sonner'
 import { PhotoboxStep1Dialog } from '@/components/dialog/photobox/step-1'
 import { PhotoboxStep2Dialog } from '@/components/dialog/photobox/step-2'
 import { PhotoboxStep3Dialog } from '@/components/dialog/photobox/step-3'
+import { StripPreview, ElementData } from '@/components/dialog/photobox/strip-preview'
 
 const photoboxDesigns = [
   { id: 1, file: 'example1-pb.png', name: 'Romantic Love' },
@@ -40,6 +41,9 @@ function PhotoboxContent() {
   const [selectedDesignId, setSelectedDesignId] = useState(1)
   const [takenPhotos, setTakenPhotos] = useState<string[]>([])
   const [photoToRetakeIdx, setPhotoToRetakeIdx] = useState<number | null>(null)
+  
+  // Lifted state for edited elements (stickers/text)
+  const [photoElements, setPhotoElements] = useState<Record<number, ElementData[]>>({})
 
   const handleRetakeConfirm = () => {
     if (photoToRetakeIdx !== null) {
@@ -536,51 +540,19 @@ function PhotoboxContent() {
 
                 {/* Strip Preview Container */}
                 <div className="flex-1 min-h-[400px]">
-
-                  {/* Strip Component */}
-                  <div className="mx-auto w-[160px] lg:w-[180px] bg-white p-2 rounded-md shadow-sm border-2 border-[#ff3a70]/20 flex flex-col gap-2 relative overflow-hidden">
-
-                    {/* Decorative Background for Strip based on selection */}
-                    <div className="absolute inset-0 pointer-events-none opacity-40 mix-blend-multiply">
-                      {selectedDesignId && (
-                        <img
-                          src={`/photobox/photobox-example/${photoboxDesigns.find(d => d.id === selectedDesignId)?.file}`}
-                          alt="Strip Background"
-                          className="w-full h-full object-cover blur-sm opacity-50"
-                        />
-                      )}
-                    </div>
-
-                    {/* Slots */}
-                    <div className="flex flex-col gap-2 relative z-10">
-                      {previewSlots.map((_, i) => {
-                        const photo = takenPhotos[i];
-                        return (
-                          <div
-                            key={i}
-                            onClick={() => {
-                              if (photo) {
-                                setPhotoToRetakeIdx(i)
-                              }
-                            }}
-                            className={`aspect-[5/3] bg-gray-100/80 backdrop-blur-sm rounded border border-gray-200 flex items-center justify-center shadow-inner overflow-hidden relative ${photo ? 'cursor-pointer hover:border-hf-rose hover:scale-[1.02] transition-all' : ''}`}
-                          >
-                            {photo ? (
-                              <img src={photo} alt={`Foto ${i + 1}`} className="w-full h-full object-cover" />
-                            ) : (
-                              <span className="text-xl font-bold text-gray-400">{i + 1}</span>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-
-                    {/* Footer */}
-                    <div className="mt-2 text-center relative z-10 bg-white/80 py-1 rounded backdrop-blur">
-                      <p className="font-serif text-[#ff3a70] font-bold text-sm leading-none">Hanfleur</p>
-                      <p className="font-serif text-[#ff3a70] font-bold text-sm leading-none mt-0.5">Florist</p>
-                    </div>
-                  </div>
+                  <StripPreview
+                    takenPhotos={takenPhotos}
+                    photoElements={photoElements}
+                    selectedDesignId={selectedDesignId}
+                    photoboxDesigns={photoboxDesigns}
+                    slotsCount={numPhotos}
+                    showDecorations={false}
+                    onPhotoClick={(i) => {
+                      if (takenPhotos[i]) {
+                        setPhotoToRetakeIdx(i)
+                      }
+                    }}
+                  />
                 </div>
 
                 {/* Tips Card */}
@@ -634,6 +606,7 @@ function PhotoboxContent() {
         takenPhotos={takenPhotos}
         numPhotos={numPhotos}
         resetPhotos={resetPhotos}
+        photoElements={photoElements}
         onContinue={openEditModal}
       />
 
@@ -646,6 +619,8 @@ function PhotoboxContent() {
         selectedDesignId={selectedDesignId}
         photoboxDesigns={photoboxDesigns}
         takenPhotos={takenPhotos}
+        photoElements={photoElements}
+        setPhotoElements={setPhotoElements}
         onBack={openPreviewModal}
         onContinue={openDownloadModal}
       />
@@ -659,6 +634,7 @@ function PhotoboxContent() {
         selectedDesignId={selectedDesignId}
         photoboxDesigns={photoboxDesigns}
         takenPhotos={takenPhotos}
+        photoElements={photoElements}
         onBack={openEditModal}
       />
 
