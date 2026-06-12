@@ -10,14 +10,21 @@ interface BouquetHeroProps {
 }
 
 export function BouquetHero({ activeIndex = 0, nextSlide, prevSlide }: BouquetHeroProps) {
-  const covers = ['/cover/cover-1.png', '/cover/cover-2.png', '/cover/cover-3.png']
+  const covers = [
+    '/cover/cover-1.png',
+    '/cover/cover-2.png',
+    '/cover/cover-3.png',
+    '/cover/cover-4.png',
+    '/cover/cover-5.png',
+    '/cover/cover-6.png'
+  ]
   const [touchStart, setTouchStart] = useState<number | null>(null)
   const [touchEnd, setTouchEnd] = useState<number | null>(null)
   const [loadedCount, setLoadedCount] = useState(0)
 
   useEffect(() => {
     if (loadedCount >= covers.length) {
-      ;(window as any).heroImagesLoaded = true
+      ; (window as any).heroImagesLoaded = true
       window.dispatchEvent(new Event('hero-images-loaded'))
     }
   }, [loadedCount, covers.length])
