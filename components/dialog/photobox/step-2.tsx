@@ -21,8 +21,8 @@ interface PhotoboxStep2DialogProps {
 
 // Sticker component with transform capabilities
 const Sticker = ({ shapeProps, isSelected, onSelect, onChange }: any) => {
-    const shapeRef = useRef<any>();
-    const trRef = useRef<any>();
+    const shapeRef = useRef<any>(null);
+    const trRef = useRef<any>(null);
 
     useEffect(() => {
         if (isSelected) {
