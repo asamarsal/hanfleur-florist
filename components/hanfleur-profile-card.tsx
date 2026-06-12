@@ -16,7 +16,7 @@ gsap.registerPlugin(ScrollTrigger)
 export function HanfleurProfileCard() {
   const sectionRef = useRef<HTMLDivElement>(null)
   const [activeIndex, setActiveIndex] = useState(0)
-  const totalSlides = 3
+  const totalSlides = 6
 
   const nextSlide = () => setActiveIndex((prev) => (prev + 1) % totalSlides)
   const prevSlide = () => setActiveIndex((prev) => (prev - 1 + totalSlides) % totalSlides)
@@ -109,7 +109,7 @@ export function HanfleurProfileCard() {
 
           {/* Desktop Slider Dots (Under Image) */}
           <div className="hidden lg:flex items-center justify-center gap-1.5 mt-4">
-            {[0, 1, 2].map((idx) => (
+            {Array.from({ length: totalSlides }).map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => setActiveIndex(idx)}
@@ -153,8 +153,8 @@ export function HanfleurProfileCard() {
             </button>
 
             {/* Mobile Slider Dots (Under Button) */}
-            <div className="flex lg:hidden items-center gap-1.5 mt-2 mb-2">
-              {[0, 1, 2].map((idx) => (
+            <div className="flex lg:hidden items-center justify-center gap-1.5 mt-2 mb-2 w-full">
+              {Array.from({ length: totalSlides }).map((_, idx) => (
                 <button
                   key={idx}
                   onClick={() => setActiveIndex(idx)}
